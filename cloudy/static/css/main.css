@@ -1,1 +1,9 @@
-@import url(../bootstrap/css/bootstrap.css);
+body {
+    padding-top: 50px;
+}
+
+
+.contents {
+    padding: 40px 15px;
+    text-align: center;
+}
