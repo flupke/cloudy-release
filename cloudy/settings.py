@@ -37,7 +37,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'crispy_forms',
+
     'cloudy.projects',
+    'cloudy.users',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -88,3 +91,14 @@ STATICFILES_DIRS = [op.join(BASE_DIR, 'static')]
 # Template settings
 
 TEMPLATE_DIRS = [op.join(BASE_DIR, 'templates')]
+
+
+# django-crispy-forms settings
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+
+# Auth settings
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'projects_list'
