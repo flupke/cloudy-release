@@ -1,15 +1,32 @@
 {% extends 'base.html' %}
 
 {% block contents %}
-<div class="navbar">
-    <div class="navbar-inner">
+
+<div class="navbar navbar-default">
+    <div class="navbar-header">
+        <a class="navbar-brand">Projects</a>
+    </div>
+    <div class="navbar-form">
         <a href="{% url 'projects_create' %}" class="btn btn-primary">
-            <i class="icon-plus icon-white"></i> Create project
+            <span class="glyphicon glyphicon-plus"></span> Create project
         </a>
     </div>
 </div>
 
-{% for project in object_list %}
-<a href="{{ project.get_absolute_url }}">{{ project }}</a>
-{% endfor %}
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Project name</th>
+            <th>Deployments</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in object_list %}
+        <tr>
+            <td><a href="{{ project.get_absolute_url }}">{{ project }}</a></td>
+            <td></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
