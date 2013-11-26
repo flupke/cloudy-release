@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
 
-from .views import ProjectsList, CreateProject, UpdateProject
+from .views import ProjectsList, CreateProject, UpdateProject, DeleteProject
 
 
 urlpatterns = patterns('',
@@ -10,4 +10,6 @@ urlpatterns = patterns('',
         name='projects_create'),
     url(r'^projects/(?P<pk>\d+)/$', login_required(UpdateProject.as_view()),
         name='projects_update'),
+    url(r'^projects/(?P<pk>\d+)/delete/$', 
+        login_required(DeleteProject.as_view()), name='projects_delete'),
 )

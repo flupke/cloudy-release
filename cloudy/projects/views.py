@@ -1,16 +1,26 @@
-from vanilla import ListView, CreateView, UpdateView
+from vanilla import ListView, CreateView, UpdateView, DeleteView
 from crispy_forms.layout import Field, Layout
 
 from cloudy.crispy import crispy_context
 from .models import Project
 
 
-class ProjectsList(ListView):
+class ProjectsMixin(object):
+
+    heading = None
+
+    def get_context_data(self, **context):
+        return super(ProjectsMixin, self).get_context_data(
+                heading=self.heading, **context)
+
+
+class ProjectsList(ProjectsMixin, ListView):
 
     model = Project
+    heading = 'Projects'
 
 
-class EditProjectMixin(object):
+class EditProjectMixin(ProjectsMixin):
 
     model = Project
 
@@ -28,9 +38,10 @@ class EditProjectMixin(object):
         return Layout(*fields)
 
     def get_context_data(self, **context):
-        context = super(EditProjectMixin, self).get_context_data(**context)
-        context.update(crispy_context(layout=self.crispy_layout()))
-        return context
+        layout = self.crispy_layout()
+        context.update(crispy_context(layout=layout))
+        return super(EditProjectMixin, self).get_context_data(
+                **context)
 
     def get_form(self, data=None, files=None, **kwargs):
         '''
@@ -42,9 +53,16 @@ class EditProjectMixin(object):
 
 class CreateProject(EditProjectMixin, CreateView):
 
-    pass
+    heading = 'Create project'
 
 
 class UpdateProject(EditProjectMixin, UpdateView):
 
-    pass
+    heading = 'Update project'
+
+
+class DeleteProject(ProjectsMixin, DeleteView):
+
+    model = Project
+    heading = 'Delete project'
+    success_url = '/'
