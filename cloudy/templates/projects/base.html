@@ -3,7 +3,7 @@
 {% block navbar %}
 <div class="navbar navbar-default">
     <div class="navbar-header">
-        <a class="navbar-brand">{{ heading }}</a>
+        <a class="navbar-brand">{% block navbar_heading %}{{ heading }}{% endblock %}</a>
     </div>
     {% block navbar_extra %}{% endblock %}
 </div>

@@ -1,4 +1,4 @@
-from vanilla import ListView, CreateView, UpdateView, DeleteView
+from vanilla import ListView, CreateView, UpdateView, DeleteView, DetailView
 from crispy_forms.layout import Field, Layout
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
@@ -65,7 +65,7 @@ class CreateProject(EditProjectMixin, CreateView):
 
 class UpdateProject(EditProjectMixin, UpdateView):
 
-    heading = 'Update project'
+    heading = 'Configure project'
 
 
 class DeleteProject(ProjectsMixin, DeleteView):
@@ -84,7 +84,10 @@ class EditDeploymentMixin(ProjectsMixin):
     model = Deployment
 
     def dispatch(self, request, project_pk=None, **kwargs):
-        self.project_object = get_object_or_404(Project, pk=project_pk)
+        if project_pk is not None:
+            self.project_object = get_object_or_404(Project, pk=project_pk)
+        else:
+            self.project_object = None
         return super(EditDeploymentMixin, self).dispatch(request,
                 project_pk=project_pk, **kwargs)
 
@@ -108,8 +111,12 @@ class EditDeploymentMixin(ProjectsMixin):
                 **context)
 
     def get_form(self, data=None, files=None, **kwargs):
+        if self.project_object is not None:
+            initial = {'project': self.project_object}
+        else:
+            initial = {'project': self.object.project}
         return super(EditDeploymentMixin, self).get_form(data=data, files=files,
-                initial={'project': self.project_object}, **kwargs)
+                initial=initial, **kwargs)
 
     def get_success_url(self):
         return reverse('projects_list')
@@ -118,3 +125,20 @@ class EditDeploymentMixin(ProjectsMixin):
 class CreateDeployment(EditDeploymentMixin, CreateView):
 
     heading = 'Create deployment'
+
+
+class UpdateDeployment(EditDeploymentMixin, UpdateView):
+
+    heading = 'Configure deployment'
+
+    def get_success_url(self):
+        return reverse('projects_deployment_overview', 
+                kwargs={'pk': self.object.pk})
+
+
+class DeploymentOverview(ProjectsMixin, DetailView):
+
+    model = Deployment
+    template_name = 'projects/deployment_overview.html'
+    object_name = 'deployment'
+    

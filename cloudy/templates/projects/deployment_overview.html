@@ -1,0 +1,13 @@
+{% extends 'projects/base.html' %}
+
+{% block navbar_heading %}
+"{{ deployment }}" deployment overview
+{% endblock %}
+
+{% block navbar_extra %}
+<div class="navbar-form">
+    <a href="{% url 'projects_update_deployment' pk=deployment.pk %}" class="btn btn-primary">
+        <span class="glyphicon glyphicon-wrench"></span> Configure
+    </a>
+</div>
+{% endblock %}

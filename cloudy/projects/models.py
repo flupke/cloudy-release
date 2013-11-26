@@ -72,6 +72,10 @@ class Deployment(models.Model):
     def __unicode__(self):
         return self.name
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('projects_deployment_overview', [self.pk])
+
     class Meta:
         ordering = ['-date_created']
 
