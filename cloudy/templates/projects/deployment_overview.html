@@ -14,4 +14,13 @@
 {% block contents %}
 <p>Configure your clients to point to the following URL:<p>
 <pre>{{ poll_url }}</pre>
+
+<h2>Nodes status</h2>
+<ul class="list-unstyled">
+    {% for node in deployment.nodes.all %}
+    <li>
+        {{ node }} <span class="label {{ node.status_css_class }}">{{ node.get_last_deployment_status_display }}</span>
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}

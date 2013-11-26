@@ -122,15 +122,23 @@ class Node(models.Model):
     Stores deployment status of a single node.
     '''
 
-    deployment = models.ForeignKey(Deployment)
+    STATUS_CSS_CLASSES = {
+        'unknown': 'label-default',
+        'pending': 'label-info',
+        'success': 'label-success',
+        'error': 'label-danger',
+    }
+
+    deployment = models.ForeignKey(Deployment, related_name='nodes')
     name = models.CharField(_('node name'), max_length=255)
 
     last_deployment_status = models.CharField(_('last deployment status'),
-            max_length=16, null=True, choices=[
+            max_length=16, choices=[
+                ('unknown', 'Unknown'),
                 ('pending', 'Pending'),
                 ('success', 'Success'),
                 ('error', 'Error'),
-            ])
+            ], default='unknown')
     last_deployment_output = models.TextField(_('last deployment output'),
             null=True)
     last_deployed_source_url = models.TextField(_('last deployed commit'),
@@ -140,6 +148,12 @@ class Node(models.Model):
             null=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
+
+    def status_css_class(self):
+        return self.STATUS_CSS_CLASSES[self.last_deployment_status]
+
+    def __unicode__(self):
+        return self.name
 
     class Meta:
         unique_together = ('deployment', 'name')
