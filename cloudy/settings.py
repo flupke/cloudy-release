@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'crispy_forms',
+    'south',
 
     'cloudy.projects',
     'cloudy.users',
