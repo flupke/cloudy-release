@@ -10,25 +10,26 @@ class Project(models.Model):
     Contains deployments' common data.
     '''
 
-    name = models.CharField(_('project'), max_length=255)
+    name = models.CharField(_('project name'), max_length=255)
     key = models.CharField(_('key'), default=lambda: uuid.uuid4().hex,
             max_length=32, editable=False, db_index=True)
 
     repository_type = models.CharField(_('repository type'), max_length=255,
-            choices=[('git', 'Git')])
+            choices=[('git', 'Git')], default='git')
     repository_url = models.TextField(_('repository URL'))
 
-    commit = models.CharField(_('the commit to deploy'), max_length=255)
+    commit = models.CharField(_('the commit to deploy'), max_length=255,
+            blank=True)
 
     deploy_script_type = models.CharField(_('deploy script type'),
             max_length=32, choices=[
                 ('bash', 'Bash'),
                 ('python_script', 'Python script'),
                 ('python_entry_point', 'Python entry point'),
-            ])
+            ], default='bash')
     deploy_script = models.TextField(_('deploy script'), 
             help_text='The script will be executed after the repository '
-            'checkout, in the checkout directory.')
+            'checkout, in the checkout directory.', blank=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

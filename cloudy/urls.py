@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-from cloudy.users.forms import LoginForm
+from cloudy.crispy import crispy_context
 
 
 admin.autodiscover()
@@ -10,8 +10,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^', include('cloudy.projects.urls')),
     url(r'^login/$', 'django.contrib.auth.views.login', {
-            'authentication_form': LoginForm,
             'template_name': 'users/login.html',
+            'extra_context': crispy_context(),
         }, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {
             'template_name': 'users/logout.html',

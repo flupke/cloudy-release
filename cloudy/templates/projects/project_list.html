@@ -1,1 +1,15 @@
 {% extends 'base.html' %}
+
+{% block contents %}
+<div class="navbar">
+    <div class="navbar-inner">
+        <a href="{% url 'projects_create' %}" class="btn btn-primary">
+            <i class="icon-plus icon-white"></i> Create project
+        </a>
+    </div>
+</div>
+
+{% for project in projects %}
+{{ project }}
+{% endfor %}
+{% endblock %}
