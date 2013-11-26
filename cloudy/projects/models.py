@@ -1,4 +1,5 @@
 import uuid
+import hashlib
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -58,6 +59,10 @@ class Deployment(models.Model):
 
     base_dir = models.TextField(_('checkout base dir'))
 
+    commit = models.CharField(_('the commit to deploy'), max_length=255,
+            blank=True, help_text='Leave blank to use the project\'s global '
+            'commit')
+
     variables_format = models.CharField(_('deployment variables format'),
             max_length=32, choices=[
                 ('yaml', 'YAML'),
@@ -69,12 +74,44 @@ class Deployment(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
-        return self.name
+    def actual_commit(self):
+        '''
+        Returns the commit to deploy, either this deployment's commit, or the
+        project's commit.
+        '''
+        if self.commit:
+            return self.commit
+        return self.project.commit
+    
+    def source_url(self):
+        '''
+        Returns an URL representing what is deployed from the VCS.
+        '''
+        return '%s://%s@%s' % (self.project.repository_type,
+                self.project.repository_url, self.actual_commit())
 
     @models.permalink
     def get_absolute_url(self):
         return ('projects_deployment_overview', [self.pk])
+
+    def hash(self):
+        '''
+        Returns a string that uniquely identifies the characteristics of this
+        deployment.
+        '''
+        hf = hashlib.sha1()
+        hf.update(self.project.repository_type)
+        hf.update(self.project.repository_url)
+        hf.update(self.project.deploy_script_type)
+        hf.update(self.project.deploy_script)
+        hf.update(self.base_dir)
+        hf.update(self.variables_format)
+        hf.update(self.variables)
+        hf.update(self.actual_commit())
+        return hf.hexdigest()
+
+    def __unicode__(self):
+        return self.name
 
     class Meta:
         ordering = ['-date_created']
