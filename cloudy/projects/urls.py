@@ -2,7 +2,8 @@ from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
 
 from .views import (ProjectsList, CreateProject, UpdateProject, DeleteProject,
-        CreateDeployment, UpdateDeployment, DeploymentOverview)
+        CreateDeployment, UpdateDeployment, DeploymentOverview,
+        DeleteDeployment)
 
 
 urlpatterns = patterns('',
@@ -22,6 +23,9 @@ urlpatterns = patterns('',
     url(r'^deployments/(?P<pk>\d+)/$',
         login_required(UpdateDeployment.as_view()),
         name='projects_update_deployment'),
+    url(r'^deployments/(?P<pk>\d+)/delete/$',
+        login_required(DeleteDeployment.as_view()),
+        name='projects_delete_deployment'),
     url(r'^deployments/(?P<pk>\d+)/overview/$',
         login_required(DeploymentOverview.as_view()),
         name='projects_deployment_overview'),

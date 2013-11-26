@@ -135,6 +135,15 @@ class UpdateDeployment(EditDeploymentMixin, UpdateView):
         return reverse('projects_deployment_overview', 
                 kwargs={'pk': self.object.pk})
 
+        
+class DeleteDeployment(ProjectsMixin, DeleteView):
+
+    model = Deployment
+    heading = 'Delete deployment'
+
+    def get_success_url(self):
+        return reverse('projects_list')
+
 
 class DeploymentOverview(ProjectsMixin, DetailView):
 
