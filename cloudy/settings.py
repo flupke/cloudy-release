@@ -43,6 +43,7 @@ INSTALLED_APPS = (
 
     'cloudy.projects',
     'cloudy.users',
+    'cloudy.api',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -150,4 +150,10 @@ class DeploymentOverview(ProjectsMixin, DetailView):
     model = Deployment
     template_name = 'projects/deployment_overview.html'
     object_name = 'deployment'
+
+    def get_context_data(self, **context):
+        poll_url = self.request.build_absolute_uri(
+                reverse('api_poll_deployment', kwargs={'key': self.object.key}))
+        context['poll_url'] = poll_url
+        return super(DeploymentOverview, self).get_context_data(**context)
     
