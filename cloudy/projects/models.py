@@ -35,6 +35,13 @@ class Project(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(User)
 
+    def __unicode__(self):
+        return self.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('projects_update', [self.pk])
+
 
 class Deployment(models.Model):
     '''

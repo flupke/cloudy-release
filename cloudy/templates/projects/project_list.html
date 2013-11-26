@@ -9,7 +9,7 @@
     </div>
 </div>
 
-{% for project in projects %}
-{{ project }}
+{% for project in object_list %}
+<a href="{{ project.get_absolute_url }}">{{ project }}</a>
 {% endfor %}
 {% endblock %}
