@@ -8,7 +8,7 @@ admin.autodiscover()
 
 
 urlpatterns = patterns('',
-    url(r'^', include('cloudy.projects.urls')),
+    url(r'^projects/', include('cloudy.projects.urls')),
     url(r'^login/$', 'django.contrib.auth.views.login', {
             'template_name': 'users/login.html',
             'extra_context': crispy_context(),

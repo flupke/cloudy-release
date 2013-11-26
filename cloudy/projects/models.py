@@ -42,30 +42,38 @@ class Project(models.Model):
     def get_absolute_url(self):
         return ('projects_update', [self.pk])
 
+    class Meta:
+        ordering = ['-date_created']
+
 
 class Deployment(models.Model):
     '''
     Defines how a project is deployed on a specific set of nodes.
     '''
 
-    project = models.ForeignKey(Project)
-    name = models.CharField(_('deployment'), max_length=255)
+    project = models.ForeignKey(Project, related_name='deployments')
+    name = models.CharField(_('deployment name'), max_length=255)
     key = models.CharField(_('key'), default=lambda: uuid.uuid4().hex,
             max_length=32, editable=False, db_index=True)
 
-    base_dir = models.TextField(_('the base directory where the code '
-            'is checked out'))    
+    base_dir = models.TextField(_('checkout base dir'))
 
     variables_format = models.CharField(_('deployment variables format'),
             max_length=32, choices=[
                 ('yaml', 'YAML'),
                 ('json', 'JSON'),
                 ('python', 'Python'),
-            ])
+            ], default='yaml')
     variables = models.TextField(_('deployment variables'), blank=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['-date_created']
 
 
 class Node(models.Model):

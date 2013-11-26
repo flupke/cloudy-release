@@ -27,7 +27,16 @@
                     </a>
                 </div>
             </td>
-            <td></td>
+            <td>
+                {% for deployment in project.deployments.all %}
+                {{ deployment }}
+                {% endfor %}
+                <div class="pull-right">
+                    <a href="{% url 'projects_create_deployment' project_pk=project.pk %}" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-plus"></span> Add
+                    </a>
+                </div>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
