@@ -2,3 +2,4 @@ Django==1.6
 psycopg2==2.5.1
 django-vanilla-views==1.0.2
 django-crispy-forms==1.4.0
+django-admin-bootstrapped==1.6.1
