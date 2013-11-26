@@ -1,6 +1,6 @@
 from vanilla import ListView, CreateView, UpdateView, DeleteView, DetailView
 from crispy_forms.layout import Field, Layout
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404
 
 from cloudy.crispy import crispy_context
@@ -13,10 +13,11 @@ class ProjectsMixin(object):
     '''
 
     heading = None
+    breadcrumbs = []
 
     def get_context_data(self, **context):
         return super(ProjectsMixin, self).get_context_data(
-                heading=self.heading, **context)
+                heading=self.heading, breadcrumbs=self.breadcrumbs, **context)
 
 # ----------------------------------------------------------------------------
 # Projects views
@@ -25,6 +26,9 @@ class ProjectsList(ProjectsMixin, ListView):
 
     model = Project
     heading = 'Projects'
+    breadcrumbs = [
+        ('Projects', None)
+    ]
 
 
 class EditProjectMixin(ProjectsMixin):
@@ -61,17 +65,29 @@ class EditProjectMixin(ProjectsMixin):
 class CreateProject(EditProjectMixin, CreateView):
 
     heading = 'Create project'
+    breadcrumbs = [
+        ('Projects', reverse_lazy('projects_list')),
+        ('Create project', None),
+    ]
 
 
 class UpdateProject(EditProjectMixin, UpdateView):
 
     heading = 'Configure project'
+    breadcrumbs = [
+        ('Projects', reverse_lazy('projects_list')),
+        ('Configure project', None),
+    ]
 
 
 class DeleteProject(ProjectsMixin, DeleteView):
 
     model = Project
     heading = 'Delete project'
+    breadcrumbs = [
+        ('Projects', reverse_lazy('projects_list')),
+        ('Delete project', None),
+    ]
 
     def get_success_url(self):
         return reverse('projects_list')
@@ -79,15 +95,45 @@ class DeleteProject(ProjectsMixin, DeleteView):
 # ----------------------------------------------------------------------------
 # Deployment views
 
-class EditDeploymentMixin(ProjectsMixin):
+class DeploymentViewsMixin(ProjectsMixin):
+
+    @property
+    def project(self):
+        return self.object.project
+
+    @property
+    def breadcrumbs(self):
+        return [
+            ('Projects', reverse_lazy('projects_list')),
+            (self.project, self.project.get_absolute_url()),
+            (self.heading, None),
+        ]
+
+
+class EditDeploymentMixin(DeploymentViewsMixin):
 
     model = Deployment
 
+    @property
+    def project(self):
+        if not hasattr(self, '_project'):
+            if self.project_pk is not None:
+                self._project = get_object_or_404(Project,
+                        pk=self.project_pk)
+            else:
+                self._project = self.object.project
+        return self._project
+
+    @property
+    def breadcrumbs(self):
+        return [
+            ('Projects', reverse_lazy('projects_list')),
+            (self.project, self.project.get_absolute_url()),
+            (self.heading, None),
+        ]
+
     def dispatch(self, request, project_pk=None, **kwargs):
-        if project_pk is not None:
-            self.project_object = get_object_or_404(Project, pk=project_pk)
-        else:
-            self.project_object = None
+        self.project_pk = project_pk
         return super(EditDeploymentMixin, self).dispatch(request,
                 project_pk=project_pk, **kwargs)
 
@@ -111,12 +157,8 @@ class EditDeploymentMixin(ProjectsMixin):
                 **context)
 
     def get_form(self, data=None, files=None, **kwargs):
-        if self.project_object is not None:
-            initial = {'project': self.project_object}
-        else:
-            initial = {'project': self.object.project}
         return super(EditDeploymentMixin, self).get_form(data=data, files=files,
-                initial=initial, **kwargs)
+                initial={'project': self.project}, **kwargs)
 
     def get_success_url(self):
         return reverse('projects_list')
@@ -136,7 +178,7 @@ class UpdateDeployment(EditDeploymentMixin, UpdateView):
                 kwargs={'pk': self.object.pk})
 
         
-class DeleteDeployment(ProjectsMixin, DeleteView):
+class DeleteDeployment(DeploymentViewsMixin, DeleteView):
 
     model = Deployment
     heading = 'Delete deployment'
@@ -145,11 +187,15 @@ class DeleteDeployment(ProjectsMixin, DeleteView):
         return reverse('projects_list')
 
 
-class DeploymentOverview(ProjectsMixin, DetailView):
+class DeploymentOverview(DeploymentViewsMixin, DetailView):
 
     model = Deployment
     template_name = 'projects/deployment_overview.html'
     object_name = 'deployment'
+
+    @property
+    def heading(self):
+        return u'"%s" deployment overview' % self.object
 
     def get_context_data(self, **context):
         poll_url = self.request.build_absolute_uri(
