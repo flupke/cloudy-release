@@ -1,11 +1,11 @@
 import json
-import datetime
 
 from django.views.generic import View
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
+from django.utils import timezone
 
 from ..projects.models import Deployment, Node
 
@@ -83,6 +83,9 @@ class PollDeployment(DeploymentView):
         del data['project']
         del data['owner']
         del data['id']
+        del data['name']
+        data['project_name'] = self.deployment.project.name
+        data['deployment_name'] = self.deployment.name
         data['commit'] = self.deployment.actual_commit()
         data['deployment_hash'] = self.deployment.hash()
         data['source_url'] = self.deployment.source_url()
@@ -116,7 +119,7 @@ class UpdateNodeStatus(DeploymentView):
         # Update node attributes
         attrs = {}
         status = request.POST['status']
-        now = datetime.datetime.now()
+        now = timezone.now()
         try:
             if status == 'success' or status == 'error':
                 attrs['last_deployment_output'] = request.POST['output']

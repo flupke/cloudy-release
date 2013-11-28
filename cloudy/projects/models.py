@@ -20,7 +20,8 @@ class Project(models.Model):
     repository_url = models.TextField(_('repository URL'))
 
     commit = models.CharField(_('the commit to deploy'), max_length=255,
-            blank=True)
+            blank=True, help_text='Deployments commits will override this '
+            'value' )
 
     deploy_script_type = models.CharField(_('deploy script type'),
             max_length=32, choices=[
@@ -57,11 +58,13 @@ class Deployment(models.Model):
     key = models.CharField(_('key'), default=lambda: uuid.uuid4().hex,
             max_length=32, editable=False, db_index=True)
 
-    base_dir = models.TextField(_('checkout base dir'))
+    base_dir = models.TextField(_('checkout base dir'), 
+            help_text='The full path where the repository is checked out is '
+            'base dir + project name.')
 
     commit = models.CharField(_('the commit to deploy'), max_length=255,
             blank=True, help_text='Leave blank to use the project\'s global '
-            'commit')
+            'commit.')
 
     variables_format = models.CharField(_('deployment variables format'),
             max_length=32, choices=[
