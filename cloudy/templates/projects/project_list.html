@@ -28,14 +28,21 @@
                 </div>
             </td>
             <td>
-                {% for deployment in project.deployments.all %}
-                <a href="{{ deployment.get_absolute_url }}">{{ deployment }}</a>
-                {% endfor %}
                 <div class="pull-right">
                     <a href="{% url 'projects_create_deployment' project_pk=project.pk %}" class="btn btn-default btn-xs">
                         <span class="glyphicon glyphicon-plus"></span> Add
                     </a>
                 </div>
+                <ul class="list-unstyled">
+                    {% for deployment in project.deployments.all %}
+                    <li>
+                        <a href="{{ deployment.get_absolute_url }}">{{ deployment }}</a>
+                        {% for label, count, class in deployment.nodes_info %}
+                        <span class="label {{ class }}" title="{{ label }}">{{ count }}</span>
+                        {% endfor %}
+                    </li>
+                    {% endfor %}
+                </ul>
             </td>
         </tr>
         {% endfor %}

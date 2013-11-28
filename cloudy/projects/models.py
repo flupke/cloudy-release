@@ -1,5 +1,6 @@
 import uuid
 import hashlib
+import collections
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -21,7 +22,7 @@ class Project(models.Model):
 
     commit = models.CharField(_('the commit to deploy'), max_length=255,
             blank=True, help_text='Deployments commits will override this '
-            'value' )
+            'value.' )
 
     deploy_script_type = models.CharField(_('deploy script type'),
             max_length=32, choices=[
@@ -97,6 +98,25 @@ class Deployment(models.Model):
     def get_absolute_url(self):
         return ('projects_deployment_overview', [self.pk])
 
+    def nodes_info(self):
+        '''
+        Returns a list of tuples condaining summarized nodes informations.
+        
+        The tuples contain ``(status_label, count, css_class)`` for each
+        status.
+        '''
+        counters = collections.defaultdict(int)
+        css_classes = {} 
+        for node in self.nodes.all():
+            label = node.get_last_deployment_status_display()
+            css_classes[label] = node.status_css_class()
+            counters[label] += 1
+        ret = []
+        for _, label in Node.STATUS_CHOICES:
+            if label in counters:
+                ret.append((label, counters[label], css_classes[label]))
+        return ret
+
     def hash(self):
         '''
         Returns a string that uniquely identifies the characteristics of this
@@ -131,17 +151,18 @@ class Node(models.Model):
         'success': 'label-success',
         'error': 'label-danger',
     }
+    STATUS_CHOICES = [
+        ('unknown', 'Unknown'),
+        ('pending', 'Pending'),
+        ('success', 'Success'),
+        ('error', 'Error'),
+    ]
 
     deployment = models.ForeignKey(Deployment, related_name='nodes')
     name = models.CharField(_('node name'), max_length=255)
 
     last_deployment_status = models.CharField(_('last deployment status'),
-            max_length=16, choices=[
-                ('unknown', 'Unknown'),
-                ('pending', 'Pending'),
-                ('success', 'Success'),
-                ('error', 'Error'),
-            ], default='unknown')
+            max_length=16, choices=STATUS_CHOICES, default='unknown')
     last_deployment_output = models.TextField(_('last deployment output'),
             null=True)
     last_deployed_source_url = models.TextField(_('last deployed commit'),
