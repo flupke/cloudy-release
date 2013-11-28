@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
 from django.utils import timezone
 
-from ..projects.models import Deployment, Node
+from ..projects.models import Deployment, Node, DeploymentLogEntry
 
 
 class ApiView(View):
@@ -113,6 +113,7 @@ class UpdateNodeStatus(DeploymentView):
     def post(self, request, *args, **kwargs):
         # Get Node object
         node_name = request.POST['node_name']
+        source_url = request.POST['source_url']
         node = get_object_or_404(Node, deployment=self.deployment,
                 name=node_name)
 
@@ -122,15 +123,23 @@ class UpdateNodeStatus(DeploymentView):
         now = timezone.now()
         try:
             if status == 'success' or status == 'error':
-                attrs['last_deployment_output'] = request.POST['output']
+                output = request.POST['output']
+                attrs['last_deployment_output'] = output
                 attrs['last_deployment_date'] = now
             elif status != 'pending':
                 return HttpResponseBadRequest('invalid status: %s' % status)
+            else:
+                output = None
         except KeyError as exc:
             return HttpResponseBadRequest('missing parameter: %s' % exc)
         attrs['last_deployment_status'] = status
-        attrs['last_deployed_source_url'] = request.POST['source_url']
+        attrs['last_deployed_source_url'] = source_url
         node.__dict__.update(attrs)
         node.save()
+
+        # Add log entry
+        DeploymentLogEntry.objects.create(node=node, source_url=source_url,
+                type='deployment.%s' % status, text=output)
+
         return 'OK'
 

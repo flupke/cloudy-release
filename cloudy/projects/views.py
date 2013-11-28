@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404
 
 from cloudy.crispy import crispy_context
-from .models import Project, Deployment
+from .models import Project, Deployment, DeploymentLogEntry, Node
 
 
 class ProjectsMixin(object):
@@ -195,7 +195,7 @@ class DeploymentOverview(DeploymentViewsMixin, DetailView):
 
     @property
     def heading(self):
-        return u'"%s" deployment overview' % self.object
+        return self.object.overview_heading()
 
     def get_context_data(self, **context):
         poll_url = self.request.build_absolute_uri(
@@ -203,3 +203,36 @@ class DeploymentOverview(DeploymentViewsMixin, DetailView):
         context['poll_url'] = poll_url
         return super(DeploymentOverview, self).get_context_data(**context)
     
+# ----------------------------------------------------------------------------
+# Nodes
+
+class NodeLogs(ProjectsMixin, ListView):
+
+    model = DeploymentLogEntry
+    context_object_name = 'entries'
+
+    @property
+    def heading(self):
+        return u'%s logs' % self.node
+
+    @property
+    def breadcrumbs(self):
+        project = self.node.deployment.project
+        deployment = self.node.deployment
+        return [
+            ('Projects', reverse_lazy('projects_list')),
+            (project, project.get_absolute_url()),
+            (deployment.overview_heading(), deployment.get_absolute_url()),
+            (self.heading, None)
+        ]
+
+    @property
+    def node(self):
+        if not hasattr(self, '_node'):
+            pk = self.request.resolver_match.kwargs['pk']
+            self._node = get_object_or_404(Node, pk=pk)
+        return self._node
+
+    def get_queryset(self):
+        qs = super(NodeLogs, self).get_queryset()
+        return qs.filter(node=self.node)

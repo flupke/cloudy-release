@@ -133,6 +133,9 @@ class Deployment(models.Model):
         hf.update(self.actual_commit())
         return hf.hexdigest()
 
+    def overview_heading(self):
+        return u'"%s" deployment overview' % self
+
     def __unicode__(self):
         return self.name
 
@@ -188,7 +191,6 @@ class DeploymentLogEntry(models.Model):
     Stores a log entry for a deployment.
     '''
 
-    deployment = models.ForeignKey(Deployment)
     node = models.ForeignKey(Node)
     date = models.DateTimeField(auto_now_add=True)
     source_url = models.TextField(_('deployment source'), 

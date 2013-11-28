@@ -20,7 +20,7 @@
 <ul class="list-unstyled">
     {% for node in deployment.nodes.all %}
     <li>
-        <h4>{{ node }} <span class="label {{ node.status_css_class }}">{{ node.get_last_deployment_status_display }}</span></h4>
+        <h4><a href="{% url 'projects_node_logs' pk=node.pk %}">{{ node }}</a> <span class="label {{ node.status_css_class }}">{{ node.get_last_deployment_status_display }}</span></h4>
         <div class="container">
             <div class="row">
                 <div class="col-xs-2">Last deployed</div>

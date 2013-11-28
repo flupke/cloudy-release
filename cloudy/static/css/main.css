@@ -2,7 +2,16 @@ body {
     padding-top: 50px;
 }
 
-
 .contents {
     padding: 40px 15px;
+}
+
+pre {
+    overflow: auto; 
+    white-space: pre; 
+    word-wrap: normal; 
+}
+
+#deployment_log pre {
+    max-width: 400px;
 }

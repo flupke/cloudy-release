@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from .views import (ProjectsList, CreateProject, UpdateProject, DeleteProject,
         CreateDeployment, UpdateDeployment, DeploymentOverview,
-        DeleteDeployment)
+        DeleteDeployment, NodeLogs)
 
 
 urlpatterns = patterns('',
@@ -29,4 +29,8 @@ urlpatterns = patterns('',
     url(r'^deployments/(?P<pk>\d+)/overview/$',
         login_required(DeploymentOverview.as_view()),
         name='projects_deployment_overview'),
+
+    # Nodes
+    url(r'^nodes/(?P<pk>\d+)/logs/$', login_required(NodeLogs.as_view()), 
+        name='projects_node_logs')
 )
