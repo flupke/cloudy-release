@@ -16,11 +16,35 @@
 <pre>{{ poll_url }}</pre>
 
 <h2>Nodes status</h2>
+{% if deployment.nodes.count %}
 <ul class="list-unstyled">
     {% for node in deployment.nodes.all %}
     <li>
-        {{ node }} <span class="label {{ node.status_css_class }}">{{ node.get_last_deployment_status_display }}</span>
+        <h4>{{ node }} <span class="label {{ node.status_css_class }}">{{ node.get_last_deployment_status_display }}</span></h4>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-2">Last deployed</div>
+                <div class="col-xs-10">{{ node.last_deployment_date }}</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2">Source URL</div>
+                <div class="col-xs-10">{{ node.last_deployed_source_url }}</div>
+            </div>
+            {% if node.last_deployment_output %}
+            <div class="row">
+                <div class="col-xs-2">Output</div>
+                <div class="col-xs-10">
+                    <a href="#" data-toggle="collapse" data-target="#node-output-{{ node.pk }}">show output</a>
+                    <pre id="node-output-{{ node.pk }}" class="collapse">{{ node.last_deployment_output }}</pre>
+                </div>
+            </div>
+            {% endif %}
+        </div>
     </li>
     {% endfor %}
 </ul>
+{% else %}
+<p>No nodes information yet.</p>
+{% endif %}
+
 {% endblock %}
