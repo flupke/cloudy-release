@@ -24,13 +24,13 @@ class Project(models.Model):
             blank=True, help_text='Deployments commits will override this '
             'value.' )
 
-    deploy_script_type = models.CharField(_('deploy script type'),
+    deployment_script_type = models.CharField(_('deployment script type'),
             max_length=32, choices=[
                 ('bash', 'Bash'),
                 ('python_script', 'Python script'),
                 ('python_entry_point', 'Python entry point'),
             ], default='bash')
-    deploy_script = models.TextField(_('deploy script'), 
+    deployment_script = models.TextField(_('deployment script'), 
             help_text='The script will be executed after the repository '
             'checkout, in the checkout directory.', blank=True)
 
@@ -125,8 +125,8 @@ class Deployment(models.Model):
         hf = hashlib.sha1()
         hf.update(self.project.repository_type)
         hf.update(self.project.repository_url)
-        hf.update(self.project.deploy_script_type)
-        hf.update(self.project.deploy_script)
+        hf.update(self.project.deployment_script_type)
+        hf.update(self.project.deployment_script)
         hf.update(self.base_dir)
         hf.update(self.variables_format)
         hf.update(self.variables)
