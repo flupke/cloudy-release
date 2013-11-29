@@ -117,7 +117,7 @@ class EditDeploymentMixin(DeploymentViewsMixin):
     @property
     def project(self):
         if not hasattr(self, '_project'):
-            project_pk = self.request.resolver_match.kwargs['project_pk']
+            project_pk = self.request.resolver_match.kwargs.get('project_pk')
             if project_pk is not None:
                 self._project = get_object_or_404(Project,
                         pk=project_pk)
