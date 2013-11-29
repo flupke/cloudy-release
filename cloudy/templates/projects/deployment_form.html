@@ -1,6 +1,37 @@
 {% extends 'projects/base.html' %}
 {% load crispy_forms_tags %}
 
+{% block extra_head %}
+{{ form.media }}
+{% endblock %}
+
 {% block contents %}
 {% crispy form form_helper %}
+{% endblock %}
+
+
+{% block page_script %}
+<script type="text/javascript">
+$(function()
+{
+    // Change CodeMirror mode when the variables format select changes
+    $('#id_variables_format').change(function()
+    {
+        var value = $(this).val();
+        if (value === 'yaml') {
+            variables_editor.setOption('mode', 'yaml');
+            variables_editor.setOption('smartIndent', true);
+        } else if (value === 'json') {
+            variables_editor.setOption('mode',  {name: 'javascript', json: true, statementIndent: 0});
+            // Disable smartIndent for JSON because it's broken inside objects
+            variables_editor.setOption('smartIndent', false);
+        } else if (value === 'python') {
+            variables_editor.setOption('mode', 'python');
+            variables_editor.setOption('smartIndent', true);
+        }
+    });
+
+    $('#id_variables_format').change();
+});
+</script>
 {% endblock %}

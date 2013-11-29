@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from cloudy.crispy import crispy_context
 from .models import Project, Deployment, DeploymentLogEntry, Node
+from .forms import EditDeploymentForm
 
 
 class ProjectsMixin(object):
@@ -50,7 +51,7 @@ class EditProjectMixin(ProjectsMixin):
 
     def get_context_data(self, **context):
         layout = self.crispy_layout()
-        context.update(crispy_context(layout=layout))
+        context.update(crispy_context(layout=layout, html5=False))
         return super(EditProjectMixin, self).get_context_data(
                 **context)
 
@@ -113,6 +114,7 @@ class DeploymentViewsMixin(ProjectsMixin):
 class EditDeploymentMixin(DeploymentViewsMixin):
 
     model = Deployment
+    form_class = EditDeploymentForm
 
     @property
     def project(self):
@@ -148,7 +150,7 @@ class EditDeploymentMixin(DeploymentViewsMixin):
 
     def get_context_data(self, **context):
         layout = self.crispy_layout()
-        context.update(crispy_context(layout=layout))
+        context.update(crispy_context(layout=layout, html5_required=False))
         return super(EditDeploymentMixin, self).get_context_data(
                 **context)
 

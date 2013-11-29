@@ -4,3 +4,4 @@ django-vanilla-views==1.0.2
 django-crispy-forms==1.4.0
 django-admin-bootstrapped==1.6.1
 South==0.8.4
+-e git+https://github.com/flupke/django-codemirror-widget.git@1c316ca4ea660e74ea0364f75e381f315f6a8fc4#egg=django-codemirror-widget
