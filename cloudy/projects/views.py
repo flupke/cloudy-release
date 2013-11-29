@@ -117,9 +117,10 @@ class EditDeploymentMixin(DeploymentViewsMixin):
     @property
     def project(self):
         if not hasattr(self, '_project'):
-            if self.project_pk is not None:
+            project_pk = self.request.resolver_match.kwargs['project_pk']
+            if project_pk is not None:
                 self._project = get_object_or_404(Project,
-                        pk=self.project_pk)
+                        pk=project_pk)
             else:
                 self._project = self.object.project
         return self._project
@@ -131,11 +132,6 @@ class EditDeploymentMixin(DeploymentViewsMixin):
             (self.project, self.project.get_absolute_url()),
             (self.heading, None),
         ]
-
-    def dispatch(self, request, project_pk=None, **kwargs):
-        self.project_pk = project_pk
-        return super(EditDeploymentMixin, self).dispatch(request,
-                project_pk=project_pk, **kwargs)
 
     def crispy_layout(self):
         '''
