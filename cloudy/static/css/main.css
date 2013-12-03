@@ -13,5 +13,6 @@ pre {
 }
 
 #deployment_log pre {
-    max-width: 400px;
+    max-width: 450px;
+    max-height: 300px;
 }
