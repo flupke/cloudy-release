@@ -32,6 +32,17 @@ $(function()
     });
 
     $('#id_variables_format').change();
+
+    // Convert tab to spaces
+    variables_editor.addKeyMap({
+        Tab: function(cm) {
+            if (cm.getSelection().length) {
+                CodeMirror.commands.indentMore(cm);
+            } else { 
+                cm.replaceSelection("    ", "end");
+            }
+        }
+    });
 });
 </script>
 {% endblock %}
