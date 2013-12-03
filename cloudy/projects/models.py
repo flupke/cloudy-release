@@ -26,9 +26,12 @@ class Project(models.Model):
 
     deployment_script_type = models.CharField(_('deployment script type'),
             max_length=32, choices=[
-                ('bash', 'Bash'),
+                ('bash', 'Bash script'),
                 ('python_script', 'Python script'),
-                ('python_entry_point', 'Python entry point'),
+                ('python_entry_point', 'Python entry point '
+                    '(path.to.module:function)'),
+                ('python_file', 'Relative path to a python file '
+                    'in the repository'),
             ], default='bash')
     deployment_script = models.TextField(_('deployment script'), 
             help_text='The script will be executed after the repository '
