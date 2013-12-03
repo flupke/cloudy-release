@@ -36,7 +36,7 @@ class Project(models.Model):
             help_text='The script will be executed after the repository '
             'checkout, in the checkout directory.', blank=True)
 
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True, db_index=True)
     date_modified = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(User)
 
@@ -77,7 +77,7 @@ class Deployment(models.Model):
             ], default='yaml')
     variables = models.TextField(_('deployment variables'), blank=True)
 
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True, db_index=True)
     date_modified = models.DateTimeField(auto_now=True)
 
     def actual_commit(self):
@@ -194,8 +194,11 @@ class DeploymentLogEntry(models.Model):
     '''
 
     node = models.ForeignKey(Node)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True, db_index=True)
     source_url = models.TextField(_('deployment source'), 
             help_text='the combined repository type, URL and commit')
     type = models.CharField(max_length=255)
     text = models.TextField(null=True)
+
+    class Meta:
+        ordering = ['-date']
