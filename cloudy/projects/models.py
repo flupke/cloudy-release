@@ -29,9 +29,8 @@ class Project(models.Model):
                 ('bash', 'Bash script'),
                 ('python_script', 'Python script'),
                 ('python_entry_point', 'Python entry point '
-                    '(path.to.module:function)'),
-                ('python_file', 'Relative path to a python file '
-                    'in the repository'),
+                    '(path.to.module or path.to.module:function)'),
+                ('python_file', 'Path to a python file'),
             ], default='bash')
     deployment_script = models.TextField(_('deployment script'), 
             help_text='The script will be executed after the repository '
