@@ -11,7 +11,8 @@ class EditDeploymentForm(forms.ModelForm):
             'tabMode': 'indent',
             'indentUnit': 4
         }, theme='mbo', dependencies=('javascript', 'python'),
-        js_var_format='%s_editor'), required=False)
+        js_var_format='%s_editor'), required=False, 
+        label='Deployment variables')
 
     class Meta:
         model = Deployment
