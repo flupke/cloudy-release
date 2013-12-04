@@ -120,6 +120,17 @@ class Deployment(models.Model):
         hf.update(self.commit)
         return hf.hexdigest()
 
+    def grouped_nodes(self):
+        '''
+        Returns this deployment's nodes grouped by similarities.
+        '''
+        groups = collections.defaultdict(list)
+        for node in self.nodes.all():
+            key = (node.last_deployment_status, node.last_deployed_source_url,
+                    node.client_version)
+            groups[key].append(node)
+        return sorted(groups.values(), key=lambda g: -len(g))
+
     def __unicode__(self):
         return self.name
 
