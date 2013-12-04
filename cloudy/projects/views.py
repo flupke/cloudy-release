@@ -175,7 +175,6 @@ class CreateDeployment(EditDeploymentMixin, CreateView):
         if copy_from is not None:
             deployment = Deployment.objects.get(pk=copy_from)
             initial = model_to_dict(deployment)
-            del initial['name']
             del initial['id']
         else:
             initial = {}

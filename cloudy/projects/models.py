@@ -125,6 +125,7 @@ class Deployment(models.Model):
 
     class Meta:
         ordering = ['-date_created']
+        unique_together = ['project', 'name']
 
 
 class Node(models.Model):
