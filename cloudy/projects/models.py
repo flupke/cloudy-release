@@ -20,10 +20,6 @@ class Project(models.Model):
             choices=[('git', 'Git')], default='git')
     repository_url = models.TextField(_('repository URL'))
 
-    commit = models.CharField(_('the commit to deploy'), max_length=255,
-            blank=True, help_text='Deployments commits will override this '
-            'value.' )
-
     deployment_script_type = models.CharField(_('deployment script type'),
             max_length=32, choices=[
                 ('bash', 'Bash script'),
@@ -80,21 +76,12 @@ class Deployment(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, db_index=True)
     date_modified = models.DateTimeField(auto_now=True)
 
-    def actual_commit(self):
-        '''
-        Returns the commit to deploy, either this deployment's commit, or the
-        project's commit.
-        '''
-        if self.commit:
-            return self.commit
-        return self.project.commit
-    
     def source_url(self):
         '''
         Returns an URL representing what is deployed from the VCS.
         '''
         return '%s://%s@%s' % (self.project.repository_type,
-                self.project.repository_url, self.actual_commit())
+                self.project.repository_url, self.commit)
 
     @models.permalink
     def get_absolute_url(self):
@@ -132,7 +119,7 @@ class Deployment(models.Model):
         hf.update(self.base_dir)
         hf.update(self.variables_format)
         hf.update(self.variables)
-        hf.update(self.actual_commit())
+        hf.update(self.commit)
         return hf.hexdigest()
 
     def overview_heading(self):

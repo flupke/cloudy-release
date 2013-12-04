@@ -53,6 +53,8 @@ class ApiView(View):
                     content_type='application/json')
         return response
 
+# ----------------------------------------------------------------------------
+# Deployments
 
 class DeploymentView(ApiView):
     '''
@@ -86,7 +88,7 @@ class PollDeployment(DeploymentView):
         del data['name']
         data['project_name'] = self.deployment.project.name
         data['deployment_name'] = self.deployment.name
-        data['commit'] = self.deployment.actual_commit()
+        data['commit'] = self.deployment.commit
         data['deployment_hash'] = self.deployment.hash()
         data['source_url'] = self.deployment.source_url()
         data['update_status_url'] = request.build_absolute_uri(
@@ -143,3 +145,20 @@ class UpdateNodeStatus(DeploymentView):
 
         return 'OK'
 
+
+class DeploymentCommit(DeploymentView):
+    '''
+    Used to retrieve or update a deployment's commit.
+    '''
+
+    def get(self, request, *args, **kwargs):
+        return self.deployment.commit
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            commit = request.POST['commit']
+        except KeyError:
+            return HttpResponseBadRequest('missing parameter: commit')
+        self.deployment.commit = commit
+        self.deployment.save()
+        return 'OK'
