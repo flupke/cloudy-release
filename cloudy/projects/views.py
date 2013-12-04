@@ -193,7 +193,7 @@ class DeploymentOverview(DeploymentViewsMixin, DetailView):
 
     @property
     def heading(self):
-        return self.object.overview_heading()
+        return self.object
 
     def get_context_data(self, **context):
         poll_url = self.request.build_absolute_uri(
@@ -220,7 +220,7 @@ class NodeViewsMixin(ProjectsMixin):
         return [
             ('Projects', reverse_lazy('projects_list')),
             (project, project.get_absolute_url()),
-            (deployment.overview_heading(), deployment.get_absolute_url()),
+            (deployment, deployment.get_absolute_url()),
             (self.heading, None)
         ]
 

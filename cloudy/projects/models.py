@@ -120,9 +120,6 @@ class Deployment(models.Model):
         hf.update(self.commit)
         return hf.hexdigest()
 
-    def overview_heading(self):
-        return u'"%s" deployment overview' % self
-
     def __unicode__(self):
         return self.name
 
