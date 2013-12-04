@@ -112,9 +112,12 @@ class UpdateNodeStatus(DeploymentView):
     :param output: 
         the console output of the deployment; only required for "success" or
         "error" status
+    :param client_version:
+        the cloudy release client version used on the node
     '''
 
-    required_parameters = ['node_name', 'status', 'source_url']
+    required_parameters = ['node_name', 'status', 'source_url',
+            'client_version']
 
     def post(self, request, *args, **kwargs):
         # Get Node object
@@ -140,6 +143,7 @@ class UpdateNodeStatus(DeploymentView):
             return HttpResponseBadRequest('missing parameter: %s' % exc)
         attrs['last_deployment_status'] = status
         attrs['last_deployed_source_url'] = source_url
+        attrs['client_version'] = request.POST['client_version']
         node.__dict__.update(attrs)
         node.save()
 

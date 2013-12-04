@@ -59,7 +59,7 @@ class Deployment(models.Model):
 
     base_dir = models.CharField(_('checkout base dir'), max_length=2047,
             help_text='The full path where the repository is checked out is '
-            'base dir + project name.')
+            'base dir + project name. You can use "~" here.')
 
     commit = models.CharField(_('the commit to deploy'), max_length=255)
 
@@ -157,6 +157,8 @@ class Node(models.Model):
             null=True, help_text='The last commit that was deployed, '
             'successfully or not.')
     last_deployment_date = models.DateTimeField(_('last deployment date'),
+            null=True)
+    client_version = models.CharField('cloudy client version', max_length=32,
             null=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
