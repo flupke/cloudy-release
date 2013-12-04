@@ -1,7 +1,8 @@
 from django.conf.urls import patterns, url
 from django.views.decorators.csrf import csrf_exempt
 
-from .views import PollDeployment, UpdateNodeStatus, DeploymentCommit
+from .views import (PollDeployment, UpdateNodeStatus, DeploymentCommit,
+        TriggerRedeploy)
 
 
 urlpatterns = patterns('',
@@ -13,4 +14,7 @@ urlpatterns = patterns('',
     url(r'^deployments/(?P<key>[0-9a-f]{32})/commit/$',
         csrf_exempt(DeploymentCommit.as_view()),
         name='api_deployment_commit'),
+    url(r'^deployments/(?P<key>[0-9a-f]{32})/trigger-redeploy/$',
+        csrf_exempt(TriggerRedeploy.as_view()),
+        name='api_trigger_redeploy'),
 )

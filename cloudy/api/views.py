@@ -170,3 +170,13 @@ class DeploymentCommit(DeploymentView):
         self.deployment.commit = commit
         self.deployment.save()
         return 'OK'
+
+
+class TriggerRedeploy(DeploymentView):
+    '''
+    Used to trigger a redeploy.
+    '''
+
+    def post(self, request, *args, **kwargs):
+        self.deployment.trigger_redeploy()
+        return 'OK'

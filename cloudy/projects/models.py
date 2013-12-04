@@ -70,6 +70,8 @@ class Deployment(models.Model):
                 ('python', 'Python'),
             ], default='yaml')
     variables = models.TextField(_('deployment variables'), blank=True)
+    redeploy_bit = models.CharField('used to manually force a redeploy', 
+            default=lambda: uuid.uuid4().hex, max_length=32, editable=False)
 
     date_created = models.DateTimeField(auto_now_add=True, db_index=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -118,8 +120,9 @@ class Deployment(models.Model):
         hf.update(self.variables_format)
         hf.update(self.variables)
         hf.update(self.commit)
+        hf.update(self.redeploy_bit)
         return hf.hexdigest()
-
+    
     def grouped_nodes(self):
         '''
         Returns this deployment's nodes grouped by similarities.
@@ -130,6 +133,10 @@ class Deployment(models.Model):
                     node.client_version)
             groups[key].append(node)
         return sorted(groups.values(), key=lambda g: -len(g))
+
+    def trigger_redeploy(self):
+        self.redeploy_bit = uuid.uuid4().hex
+        self.save(update_fields=['redeploy_bit'])
 
     def __unicode__(self):
         return self.name
