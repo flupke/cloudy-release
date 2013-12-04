@@ -2,6 +2,10 @@
 
 {% block contents %}
 <p>Really delete node "{{ object }}"?</p>
+<p class="text-muted">
+    Note: this will not avoid the node to execute future deployments. It is
+    just useful for removing dead nodes.
+</p>
 
 <form method="post">
     {% csrf_token %}
