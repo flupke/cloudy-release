@@ -6,13 +6,6 @@ body {
     padding: 40px 15px;
 }
 
-pre {
-    overflow: auto; 
-    white-space: pre; 
-    word-wrap: normal; 
-}
-
-#deployment_log pre {
-    max-width: 450px;
-    max-height: 300px;
+#deployment_log .date {
+    white-space: nowrap;
 }

@@ -13,7 +13,7 @@
     <tbody>
         {% for entry in entries %}
         <tr>
-            <td>{{ entry.date }}</td>
+            <td class="date">{{ entry.date }}</td>
             <td><a href="{{ entry.source_url }}" title="{{ entry.source_url }}">{{ entry.source_url|truncatechars:50 }}</a></td>
             <td>{{ entry.type }}</td>
             <td>
