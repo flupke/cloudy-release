@@ -204,14 +204,14 @@ class DeploymentOverview(DeploymentViewsMixin, DetailView):
 # ----------------------------------------------------------------------------
 # Nodes
 
-class NodeLogs(ProjectsMixin, ListView):
-
-    model = DeploymentLogEntry
-    context_object_name = 'entries'
+class NodeViewsMixin(ProjectsMixin):
 
     @property
-    def heading(self):
-        return u'%s logs' % self.node
+    def node(self):
+        if not hasattr(self, '_node'):
+            pk = self.request.resolver_match.kwargs['pk']
+            self._node = get_object_or_404(Node, pk=pk)
+        return self._node
 
     @property
     def breadcrumbs(self):
@@ -224,13 +224,26 @@ class NodeLogs(ProjectsMixin, ListView):
             (self.heading, None)
         ]
 
+
+class NodeLogs(NodeViewsMixin, ListView):
+
+    model = DeploymentLogEntry
+    context_object_name = 'entries'
+
     @property
-    def node(self):
-        if not hasattr(self, '_node'):
-            pk = self.request.resolver_match.kwargs['pk']
-            self._node = get_object_or_404(Node, pk=pk)
-        return self._node
+    def heading(self):
+        return u'%s logs' % self.node
 
     def get_queryset(self):
         qs = super(NodeLogs, self).get_queryset()
         return qs.filter(node=self.node)
+
+
+class DeleteNode(NodeViewsMixin, DeleteView):
+
+    model = Node
+    heading = 'Delete node'
+
+    def get_success_url(self):
+        return reverse('projects_deployment_overview', 
+                kwargs={'pk': self.object.deployment.pk})
