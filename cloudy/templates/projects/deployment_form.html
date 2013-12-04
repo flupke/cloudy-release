@@ -43,6 +43,12 @@ $(function()
             }
         }
     });
+
+    $('.CodeMirror').resizable({
+        resize: function() {
+            variables_editor.setSize($(this).width(), $(this).height());
+        }
+    });
 });
 </script>
 {% endblock %}
