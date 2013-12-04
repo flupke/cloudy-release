@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.views.generic import RedirectView
 
 from cloudy.crispy import crispy_context
 
@@ -8,6 +9,7 @@ admin.autodiscover()
 
 
 urlpatterns = patterns('',
+    url(r'^$', RedirectView.as_view(url='/projects/'), name='home'),
     url(r'^projects/', include('cloudy.projects.urls')),
     url(r'^api/', include('cloudy.api.urls')),
     url(r'^login/$', 'django.contrib.auth.views.login', {
