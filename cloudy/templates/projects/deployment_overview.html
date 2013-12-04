@@ -33,8 +33,8 @@
                     <a href='#' data-toggle="collapse" data-target="#node-group-{{ forloop.counter0 }}">... and {{ group|slice:"1:"|length }} others</a>
                 <li>
             {% endwith %}
-            <li id="node-group-{{ forloop.counter0 }}" class="collapse list-unstyled">
-                <ul>
+            <li id="node-group-{{ forloop.counter0 }}" class="collapse">
+                <ul class="list-unstyled">
                     {% for node in group|slice:"1:" %}
                         {% include 'projects/include/deployment_overview_node.html' %}
                     {% endfor %}
