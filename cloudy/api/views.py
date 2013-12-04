@@ -94,6 +94,9 @@ class PollDeployment(DeploymentView):
         data['update_status_url'] = request.build_absolute_uri(
                 reverse('api_update_node_status',
                 kwargs={'key': self.deployment.key}))
+        data['commit_url'] = request.build_absolute_uri(
+                reverse('api_deployment_commit', 
+                kwargs={'key': self.deployment.key}))
         return data
 
 
