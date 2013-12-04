@@ -28,14 +28,18 @@
             </a>
         </h4>
         <div class="container-fluid">
+            {% if node.last_deployment_date %}
             <div class="row">
                 <div class="col-xs-2">Last deployed</div>
                 <div class="col-xs-10">{{ node.last_deployment_date }}</div>
             </div>
+            {% endif %}
+            {% if node.last_deployed_source_url %}
             <div class="row">
                 <div class="col-xs-2">Source URL</div>
                 <div class="col-xs-10">{{ node.last_deployed_source_url }}</div>
             </div>
+            {% endif %}
             {% if node.last_deployment_output %}
             <div class="row">
                 <div class="col-xs-2">Output</div>
