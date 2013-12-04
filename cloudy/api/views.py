@@ -69,16 +69,17 @@ class PollDeployment(DeploymentView):
     '''
     Clients regularly poll this view to retrieve deployment state.        
 
-    :param node_name: the client node name
+    :param node_name: 
+        the client node name, creates a new node if there was not already a
+        node in this deployment with this name
     '''
 
-    required_parameters = ['node_name']
-
     def get(self, request, *args, **kwargs):
-        # Get or create Node object
-        node_name = request.GET['node_name']
-        node, _ = Node.objects.get_or_create(deployment=self.deployment,
-                name=node_name)
+        # Get or create Node object if node_name was passed in the URL
+        if 'node_name' in request.GET:
+            node_name = request.GET['node_name']
+            Node.objects.get_or_create(deployment=self.deployment,
+                    name=node_name)
         # Build response dict
         data = model_to_dict(self.deployment.project)
         data.update(model_to_dict(self.deployment))
