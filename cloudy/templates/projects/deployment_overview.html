@@ -3,7 +3,10 @@
 {% block navbar_extra %}
 <div class="navbar-form">
     <a href="{% url 'projects_update_deployment' pk=deployment.pk %}" class="btn btn-default">
-        <span class="glyphicon glyphicon-wrench"></span> Configure
+        <span class="glyphicon glyphicon-cog"></span> Configure
+    </a>
+    <a href="{% url 'projects_create_deployment' project_pk=deployment.project.pk %}?copy_from={{ deployment.pk }}" class="btn btn-default">
+        <span class="glyphicon glyphicon-export"></span> Copy as new
     </a>
     <a href="{% url 'projects_delete_deployment' pk=deployment.pk %}" class="btn btn-default">
         <span class="glyphicon glyphicon-remove"></span> Delete

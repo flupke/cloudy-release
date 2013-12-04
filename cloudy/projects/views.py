@@ -2,6 +2,7 @@ from vanilla import ListView, CreateView, UpdateView, DeleteView, DetailView
 from crispy_forms.layout import Field, Layout
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404
+from django.forms import model_to_dict
 
 from cloudy.crispy import crispy_context
 from .models import Project, Deployment, DeploymentLogEntry, Node
@@ -155,8 +156,11 @@ class EditDeploymentMixin(DeploymentViewsMixin):
                 **context)
 
     def get_form(self, data=None, files=None, **kwargs):
+        initial = kwargs.get('initial', {})
+        initial['project'] = self.project
+        kwargs['initial'] = initial
         return super(EditDeploymentMixin, self).get_form(data=data, files=files,
-                initial={'project': self.project}, **kwargs)
+                **kwargs)
 
     def get_success_url(self):
         return reverse('projects_list')
@@ -165,6 +169,19 @@ class EditDeploymentMixin(DeploymentViewsMixin):
 class CreateDeployment(EditDeploymentMixin, CreateView):
 
     heading = 'Create deployment'
+
+    def get_form(self, data=None, files=None, **kwargs):
+        copy_from = self.request.GET.get('copy_from')
+        if copy_from is not None:
+            deployment = Deployment.objects.get(pk=copy_from)
+            initial = model_to_dict(deployment)
+            del initial['name']
+            del initial['id']
+        else:
+            initial = {}
+        kwargs['initial'] = initial
+        return super(CreateDeployment, self).get_form(data=data, files=files,
+                **kwargs)
 
 
 class UpdateDeployment(EditDeploymentMixin, UpdateView):
