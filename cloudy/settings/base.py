@@ -107,3 +107,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'projects_list'
+
+# Proxy settings
+
+SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
