@@ -184,6 +184,9 @@ class Node(models.Model):
     def status_css_class(self):
         return self.STATUS_CSS_CLASSES[self.last_deployment_status]
 
+    def last_deployment_output_is_relevant(self):
+        return self.last_deployment_status in ('success', 'error')
+
     def __unicode__(self):
         return self.name
 

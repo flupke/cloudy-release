@@ -25,7 +25,7 @@
             <div class="col-xs-11">{{ node.client_version }}</div>
         </div>
         {% endif %}
-        {% if node.last_deployment_output %}
+        {% if node.last_deployment_output and node.last_deployment_output_is_relevant %}
         <div class="row">
             <div class="col-xs-1">Output</div>
             <div class="col-xs-11">
