@@ -44,7 +44,7 @@ class Project(models.Model):
         return ('projects_update', [self.pk])
 
     class Meta:
-        ordering = ['-date_created']
+        ordering = ['name']
 
 
 class Deployment(models.Model):
