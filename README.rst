@@ -1,6 +1,10 @@
 Cloudy Release (with a chance of sunshine)
 ==========================================
 
+.. image:: https://requires.io/github/flupke/cloudy-release/requirements.png?branch=develop
+   :target: https://requires.io/github/flupke/cloudy-release/requirements/?branch=develop
+   :alt: Requirements Status
+
 Cloudy Release is a system for deploying applications.
 
 It tries to solve these common problems:
