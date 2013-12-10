@@ -3,10 +3,12 @@ from crispy_forms.layout import Field, Layout
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.forms import model_to_dict
+from django.http import HttpResponseRedirect
 
 from cloudy.crispy import crispy_context
-from .models import Project, Deployment, DeploymentLogEntry, Node
-from .forms import EditDeploymentForm
+from .models import (Project, Deployment, DeploymentLogEntry, Node,
+        DeploymentBaseVariables)
+from .forms import EditDeploymentForm, EditDeploymentBaseVariablesForm
 
 
 class ProjectsMixin(object):
@@ -18,8 +20,13 @@ class ProjectsMixin(object):
     breadcrumbs = []
 
     def get_context_data(self, **context):
+        if self.request.path.startswith('/projects/base-variables/'):
+            menu_item = 'base_variables'
+        else:
+            menu_item = 'projects'
         return super(ProjectsMixin, self).get_context_data(
-                heading=self.heading, breadcrumbs=self.breadcrumbs, **context)
+                heading=self.heading, breadcrumbs=self.breadcrumbs,
+                menu_item=menu_item, **context)
 
 # ----------------------------------------------------------------------------
 # Projects views
@@ -263,3 +270,61 @@ class DeleteNode(NodeViewsMixin, DeleteView):
     def get_success_url(self):
         return reverse('projects_deployment_overview', 
                 kwargs={'pk': self.object.deployment.pk})
+
+# ----------------------------------------------------------------------------
+# Base variables
+
+class BaseVariablesList(ProjectsMixin, ListView):
+
+    model = DeploymentBaseVariables
+    context_object_name = 'base_variables_list'
+    heading = 'Base variables'
+    breadcrumbs = [(heading, None)]
+
+
+class EditBaseVariablesMixin(ProjectsMixin):
+
+    model = DeploymentBaseVariables
+    form_class = EditDeploymentBaseVariablesForm
+    success_url = reverse_lazy('projects_base_variables_list')
+
+    def get_context_data(self, **context):
+        context.update(crispy_context(html5_required=False))
+        return super(EditBaseVariablesMixin, self).get_context_data(
+                **context)
+
+
+class CreateBaseVariables(EditBaseVariablesMixin, CreateView):
+
+    heading = 'Create base variables'
+    breadcrumbs = [
+        ('Base variables', reverse_lazy('projects_base_variables_list')),
+        (heading, None),
+    ]
+
+
+class UpdateBaseVariables(EditBaseVariablesMixin, UpdateView):
+
+    heading = 'Edit base variables'
+    breadcrumbs = [
+        ('Base variables', reverse_lazy('projects_base_variables_list')),
+        (heading, None),
+    ]
+
+
+class DeleteBaseVariables(ProjectsMixin, DeleteView):
+
+    model = DeploymentBaseVariables
+    success_url = reverse_lazy('projects_base_variables_list')
+    heading = 'Delete base variables'
+    breadcrumbs = [
+        ('Base variables', reverse_lazy('projects_base_variables_list')),
+        (heading, None),
+    ]
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.deleted = True
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+

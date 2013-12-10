@@ -32,8 +32,8 @@
         <div class="collapse navbar-collapse">
             {% if user.is_authenticated %}
             <ul class="nav navbar-nav">
-                <li><a href="{% url 'projects_list' %}">Projects</a></li>
-                <li><a href="#">Base variables</a></li>
+                <li{% if menu_item == 'projects' %} class="active"{% endif %}><a href="{% url 'projects_list' %}">Projects</a></li>
+                <li{% if menu_item == 'base_variables' %} class="active"{% endif %}><a href="{% url 'projects_base_variables_list' %}">Base variables</a></li>
             </ul>
             {% endif %}
             <ul class="nav navbar-nav navbar-right">

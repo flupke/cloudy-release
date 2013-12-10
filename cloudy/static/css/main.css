@@ -9,3 +9,7 @@ body {
 #deployment_log .date {
     white-space: nowrap;
 }
+
+#deployment_variables_table {
+    width: 33.3333%;
+}

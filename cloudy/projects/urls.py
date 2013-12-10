@@ -3,7 +3,8 @@ from django.contrib.auth.decorators import login_required
 
 from .views import (ProjectsList, CreateProject, UpdateProject, DeleteProject,
         CreateDeployment, UpdateDeployment, DeploymentOverview,
-        DeleteDeployment, NodeLogs, DeleteNode)
+        DeleteDeployment, NodeLogs, DeleteNode, BaseVariablesList,
+        CreateBaseVariables, UpdateBaseVariables, DeleteBaseVariables)
 
 
 urlpatterns = patterns('',
@@ -35,4 +36,17 @@ urlpatterns = patterns('',
         name='projects_node_logs'),
     url(r'^nodes/(?P<pk>\d+)/delete/$', login_required(DeleteNode.as_view()),
         name='projects_delete_node'),
+
+    # Base variables 
+    url(r'^base-variables/$', login_required(BaseVariablesList.as_view()),
+        name='projects_base_variables_list'),
+    url(r'^base-variables/create/$',
+        login_required(CreateBaseVariables.as_view()),
+        name='projects_create_base_variables'),
+    url(r'^base-variables/(?P<pk>\d+)/$',
+        login_required(UpdateBaseVariables.as_view()),
+        name='projects_update_base_variables'),
+    url(r'^base-variables/(?P<pk>\d+)/delete/$',
+        login_required(DeleteBaseVariables.as_view()),
+        name='projects_delete_base_variables'),
 )

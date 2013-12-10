@@ -47,6 +47,40 @@ class Project(models.Model):
         ordering = ['name']
 
 
+class DeploymentBaseVariablesManager(models.Manager):
+
+    def get_queryset(self):
+        queryset = super(DeploymentBaseVariablesManager, self).get_queryset()
+        return queryset.filter(deleted=False)
+
+
+class DeploymentBaseVariables(models.Model):
+    '''
+    Can be used to define common deployment variables to be merged with
+    variables in :class:`Deployment`.
+    '''
+
+    objects = DeploymentBaseVariablesManager()
+
+    name = models.CharField(_('variables name'), max_length=255,
+            db_index=True, unique=True)
+    variables_format = models.CharField(_('deployment variables format'),
+            max_length=32, choices=[
+                ('yaml', 'YAML'),
+                ('json', 'JSON'),
+                ('python', 'Python'),
+            ], default='yaml')
+    variables = models.TextField(_('deployment variables'), blank=True)
+
+    deleted = models.BooleanField(editable=False, default=False, db_index=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
+
 class Deployment(models.Model):
     '''
     Defines how a project is deployed on a specific set of nodes.
@@ -63,6 +97,8 @@ class Deployment(models.Model):
 
     commit = models.CharField(_('the commit to deploy'), max_length=255)
 
+    base_variables = models.ForeignKey(DeploymentBaseVariables, null=True,
+            blank=True)
     variables_format = models.CharField(_('deployment variables format'),
             max_length=32, choices=[
                 ('yaml', 'YAML'),
