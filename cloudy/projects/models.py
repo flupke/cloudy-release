@@ -148,11 +148,14 @@ class Deployment(models.Model):
         deployment.
         '''
         hf = hashlib.sha1()
+        hf.update(self.project.name)
         hf.update(self.project.repository_type)
         hf.update(self.project.repository_url)
         hf.update(self.project.deployment_script_type)
         hf.update(self.project.deployment_script)
         hf.update(self.base_dir)
+        hf.update(self.base_variables.variables_format)
+        hf.update(self.base_variables.variables)
         hf.update(self.variables_format)
         hf.update(self.variables)
         hf.update(self.commit)
