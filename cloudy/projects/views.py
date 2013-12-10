@@ -302,6 +302,17 @@ class CreateBaseVariables(EditBaseVariablesMixin, CreateView):
         (heading, None),
     ]
 
+    def get_form(self, data=None, files=None, **kwargs):
+        copy_from = self.request.GET.get('copy_from')
+        if copy_from is not None:
+            base_variables = DeploymentBaseVariables.objects.get(pk=copy_from)
+            initial = model_to_dict(base_variables)
+            del initial['id']
+        else:
+            initial = {}
+        kwargs['initial'] = initial
+        return super(CreateBaseVariables, self).get_form(data=data, files=files,
+                **kwargs)
 
 class UpdateBaseVariables(EditBaseVariablesMixin, UpdateView):
 
