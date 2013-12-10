@@ -87,8 +87,12 @@ class PollDeployment(DeploymentView):
         del data['owner']
         del data['id']
         del data['name']
-        data['base_variables_format'] = self.deployment.base_variables.variables_format
-        data['base_variables'] = self.deployment.base_variables.variables
+        if self.deployment.base_variables is not None:
+            data['base_variables_format'] = self.deployment.base_variables.variables_format
+            data['base_variables'] = self.deployment.base_variables.variables
+        else:
+            data['base_variables_format'] = None
+            data['base_variables'] = None
         data['project_name'] = self.deployment.project.name
         data['deployment_name'] = self.deployment.name
         data['commit'] = self.deployment.commit
