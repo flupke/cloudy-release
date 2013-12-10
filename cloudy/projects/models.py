@@ -154,8 +154,9 @@ class Deployment(models.Model):
         hf.update(self.project.deployment_script_type)
         hf.update(self.project.deployment_script)
         hf.update(self.base_dir)
-        hf.update(self.base_variables.variables_format)
-        hf.update(self.base_variables.variables)
+        if self.base_variables is not None:
+            hf.update(self.base_variables.variables_format)
+            hf.update(self.base_variables.variables)
         hf.update(self.variables_format)
         hf.update(self.variables)
         hf.update(self.commit)
