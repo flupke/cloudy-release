@@ -170,7 +170,8 @@ class EditDeploymentMixin(DeploymentViewsMixin):
                 **kwargs)
 
     def get_success_url(self):
-        return reverse('projects_list')
+        return reverse('projects_deployment_overview', 
+                kwargs={'pk': self.object.pk})
 
 
 class CreateDeployment(EditDeploymentMixin, CreateView):
@@ -193,10 +194,6 @@ class CreateDeployment(EditDeploymentMixin, CreateView):
 class UpdateDeployment(EditDeploymentMixin, UpdateView):
 
     heading = 'Configure deployment'
-
-    def get_success_url(self):
-        return reverse('projects_deployment_overview', 
-                kwargs={'pk': self.object.pk})
 
         
 class DeleteDeployment(DeploymentViewsMixin, DeleteView):
