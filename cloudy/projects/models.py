@@ -88,7 +88,7 @@ class Deployment(models.Model):
     '''
 
     project = models.ForeignKey(Project, related_name='deployments')
-    name = models.CharField(_('deployment name'), max_length=255)
+    name = models.CharField(_('deployment name'), max_length=255, db_index=True)
     key = models.CharField(_('key'), default=lambda: uuid.uuid4().hex,
             max_length=32, editable=False, db_index=True)
 
@@ -185,7 +185,7 @@ class Deployment(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['-date_created']
+        ordering = ['name']
         unique_together = ['project', 'name']
 
 
