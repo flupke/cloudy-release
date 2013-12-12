@@ -33,37 +33,31 @@
                         <span class="glyphicon glyphicon-plus"></span> Add
                     </a>
                 </div>
-                <table class="deployments_list">
+                <ul class="list-unstyled">
                     {% for deployment in project.deployments.all %}
-                        <tr>
-                            <td>
-                                <a href="{{ deployment.get_absolute_url }}">{{ deployment }}</a>
-                                {% for label, count, class in deployment.nodes_info %}
-                                    <span class="label {{ class }}" title="{{ label }}">{{ count }}</span>
-                                {% endfor %}
-                            </td>
-                            {% if deployment.nodes_info|length == 1 %}
-                                {% if deployment.grouped_nodes|length == 1 %}
-                                    {% with deployment.grouped_nodes.0.0 as first_node %}
-                                        <td><small class="text-muted">{{ first_node.last_deployment_date }}</small></td>
-                                        <td>
-                                            <small class="text-muted" title="{{ first_node.last_deployed_source_url }}">
-                                                {{ first_node.last_deployed_source_url|truncatechars:50 }}
-                                            </small>
-                                        </td>
-                                    {% endwith %}
-                                {% else %}
-                                    <td>
-                                        <small class="text-muted">
-                                            <span class="glyphicon glyphicon-warning-sign"></span> inconsistencies found, check deployment for details
-                                        </small>
-                                    </td>
-                                    <td></td>
-                                {% endif %}
+                    <li>
+                        <a href="{{ deployment.get_absolute_url }}">{{ deployment }}</a>
+                        {% for label, count, class in deployment.nodes_info %}
+                        <span class="label {{ class }}" title="{{ label }}">{{ count }}</span>
+                        {% endfor %}
+                        {% if deployment.nodes_info|length == 1 %}
+                            {% if deployment.grouped_nodes|length == 1 %}
+                                {% with deployment.grouped_nodes.0.0 as first_node %}
+                                    <small class="text-muted">
+                                        {{ first_node.last_deployment_date }}
+                                        -
+                                        <span title="{{ first_node.last_deployed_source_url }}">{{ first_node.last_deployed_source_url|truncatechars:50 }}</span>
+                                    </small>
+                                {% endwith %}
+                            {% else %}
+                                <small class="text-muted">
+                                    <span class="glyphicon glyphicon-warning-sign"></span> inconsistencies found, check deployment for details
+                                </small>
                             {% endif %}
-                        </tr>
+                        {% endif %}
+                    </li>
                     {% endfor %}
-                </table>
+                </ul>
             </td>
         </tr>
         {% endfor %}

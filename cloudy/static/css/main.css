@@ -13,7 +13,3 @@ body {
 #deployment_variables_table {
     width: 33.3333%;
 }
-
-.deployments_list td {
-    padding-right: 0.5em;
-}
