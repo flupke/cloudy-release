@@ -1,4 +1,5 @@
 {% extends 'projects/base.html' %}
+{% load projects %}
 
 {% block navbar_extra %}
 <div class="navbar-form">
@@ -46,7 +47,7 @@
                                     <small class="text-muted">
                                         {{ first_node.last_deployment_date }}
                                         -
-                                        <span title="{{ first_node.last_deployed_source_url }}">{{ first_node.last_deployed_source_url|truncatechars:50 }}</span>
+                                        <span title="{{ first_node.last_deployed_source_url }}">{{ first_node.last_deployed_source_url|truncate_vcs_url }}</span>
                                     </small>
                                 {% endwith %}
                             {% else %}
