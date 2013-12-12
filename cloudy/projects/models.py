@@ -5,6 +5,7 @@ import collections
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.utils.functional import cached_property
 
 
 class Project(models.Model):
@@ -123,6 +124,7 @@ class Deployment(models.Model):
     def get_absolute_url(self):
         return ('projects_deployment_overview', [self.pk])
 
+    @cached_property
     def nodes_info(self):
         '''
         Returns a list of tuples condaining summarized nodes informations.
@@ -163,6 +165,7 @@ class Deployment(models.Model):
         hf.update(self.redeploy_bit)
         return hf.hexdigest()
     
+    @cached_property
     def grouped_nodes(self):
         '''
         Returns this deployment's nodes grouped by similarities.
