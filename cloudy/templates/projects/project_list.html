@@ -45,7 +45,7 @@
                             {% if deployment.grouped_nodes|length == 1 %}
                                 {% with deployment.grouped_nodes.0.0 as first_node %}
                                     <small class="text-muted">
-                                        {{ first_node.last_deployment_date }}
+                                        {{ first_node.last_deployment_date|timesince }}
                                         -
                                         <span title="{{ first_node.last_deployed_source_url }}">{{ first_node.last_deployed_source_url|truncate_vcs_url }}</span>
                                     </small>
