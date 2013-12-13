@@ -1,5 +1,6 @@
 {% extends 'projects/base.html' %}
 {% load projects %}
+{% load humanize %}
 
 {% block navbar_extra %}
 <div class="navbar-form">
@@ -45,7 +46,7 @@
                             {% if deployment.grouped_nodes|length == 1 %}
                                 {% with deployment.grouped_nodes.0.0 as first_node %}
                                     <small class="text-muted">
-                                        {{ first_node.last_deployment_date|timesince }}
+                                        {{ first_node.last_deployment_date|naturaltime }}
                                         -
                                         <span title="{{ first_node.last_deployed_source_url }}">{{ first_node.last_deployed_source_url|truncate_vcs_url }}</span>
                                     </small>
