@@ -37,7 +37,7 @@
             {% with node=group.0 %}
                 {% include 'projects/include/deployment_overview_node.html' %}
                 <li>
-                    <a data-toggle="collapse" data-target="#node-group-{{ forloop.counter0 }}">... and {{ group|slice:"1:"|length }} others</a>
+                    <a data-toggle="collapse" data-target="#node-group-{{ forloop.counter0 }}" class="btn btn-default btn-xs">Show {{ group|slice:"1:"|length }} others</a>
                 <li>
             {% endwith %}
             <li id="node-group-{{ forloop.counter0 }}" class="collapse">
