@@ -24,14 +24,15 @@ Cloudy Release tries to answer these problems simply:
 
 * the web interface gives an overview to check deployment details;
 
-* projects can have different deployment configurations, with different
-  variables (for example a website could have production and testing
-  deployments, with different database settings). The variables then are
-  transmitted to the clients, which pass them to deployment scripts.
+* projects can have different deployment configurations, each with their set of
+  deployment variables (think of Saltstack's pillars). For example a website
+  could have production and testing deployments, with different database
+  settings. The deployment scripts can then retrieve these variables and use
+  them as they want.
 
 Compared to Fabric, deployments are faster because deployment scripts are run
-locally by the clients, you have a place to check if something went wrong
-with your deployments, and you can write template deployment scripts driven by
+locally by the clients, you have a place to check if something went wrong with
+your deployments, and you can write template deployment scripts driven by
 configuration (you can do this to some extent with Fabric using roles, but
 roles are tied to hosts, you can't deploy production + testing variants of your
 site on the same host without ugly hacks).
