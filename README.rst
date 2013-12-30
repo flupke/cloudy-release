@@ -93,7 +93,8 @@ Put local settings in ``cloudy/settings/local.py``::
     STATIC_ROOT = '/home/cloudy/static'
     ALLOWED_HOSTS = ['cloudy.example.com']
 
-Create a nginx configuration to serve the site::
+Create a nginx configuration in
+``/etc/nginx/sites-enables/cloudy.example.com``::
 
     server {
         listen 80;
