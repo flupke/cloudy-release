@@ -16,7 +16,7 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'DeploymentLogEntry.deployment'
         raise RuntimeError("Cannot reverse this migration. 'DeploymentLogEntry.deployment' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration        # Adding field 'DeploymentLogEntry.deployment'
         db.add_column(u'projects_deploymentlogentry', 'deployment',
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['projects.Deployment']),

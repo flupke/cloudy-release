@@ -24,7 +24,7 @@ $(function()
         Tab: function(cm) {
             if (cm.getSelection().length) {
                 CodeMirror.commands.indentMore(cm);
-            } else { 
+            } else {
                 cm.replaceSelection("    ", "end");
             }
         }

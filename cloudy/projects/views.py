@@ -170,7 +170,7 @@ class EditDeploymentMixin(DeploymentViewsMixin):
                 **kwargs)
 
     def get_success_url(self):
-        return reverse('projects_deployment_overview', 
+        return reverse('projects_deployment_overview',
                 kwargs={'pk': self.object.pk})
 
 
@@ -195,7 +195,7 @@ class UpdateDeployment(EditDeploymentMixin, UpdateView):
 
     heading = 'Configure deployment'
 
-        
+
 class DeleteDeployment(DeploymentViewsMixin, DeleteView):
 
     model = Deployment
@@ -220,7 +220,7 @@ class DeploymentOverview(DeploymentViewsMixin, DetailView):
                 reverse('api_poll_deployment', kwargs={'key': self.object.key}))
         context['poll_url'] = poll_url
         return super(DeploymentOverview, self).get_context_data(**context)
-    
+
 # ----------------------------------------------------------------------------
 # Nodes
 
@@ -265,7 +265,7 @@ class DeleteNode(NodeViewsMixin, DeleteView):
     heading = 'Delete node'
 
     def get_success_url(self):
-        return reverse('projects_deployment_overview', 
+        return reverse('projects_deployment_overview',
                 kwargs={'pk': self.object.deployment.pk})
 
 # ----------------------------------------------------------------------------

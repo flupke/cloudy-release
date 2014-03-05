@@ -38,10 +38,10 @@ class ApiView(View):
         unknown_parameters = request_parameters.difference(request_parameters)
         errors = []
         if missing_parameters:
-            errors.append('missing parameters: %s' % 
+            errors.append('missing parameters: %s' %
                     ', '.join(missing_parameters))
         if unknown_parameters:
-            errors.append('unkown parameters: %s' % 
+            errors.append('unkown parameters: %s' %
                     ', '.join(unknown_parameters))
         if errors:
             return HttpResponseBadRequest('\n'.join(errors))
@@ -67,9 +67,9 @@ class DeploymentView(ApiView):
 
 class PollDeployment(DeploymentView):
     '''
-    Clients regularly poll this view to retrieve deployment state.        
+    Clients regularly poll this view to retrieve deployment state.
 
-    :param node_name: 
+    :param node_name:
         the client node name, creates a new node if there was not already a
         node in this deployment with this name
     '''
@@ -102,7 +102,7 @@ class PollDeployment(DeploymentView):
                 reverse('api_update_node_status',
                 kwargs={'key': self.deployment.key}))
         data['commit_url'] = request.build_absolute_uri(
-                reverse('api_deployment_commit', 
+                reverse('api_deployment_commit',
                 kwargs={'key': self.deployment.key}))
         return data
 
@@ -113,9 +113,9 @@ class UpdateNodeStatus(DeploymentView):
 
     :param node_name: the client node name
     :param status: the status string
-    :param source_url: 
+    :param source_url:
         the "source_url" value that was returned by the poll view
-    :param output: 
+    :param output:
         the console output of the deployment; only required for "success" or
         "error" status
     :param client_version:
@@ -167,7 +167,7 @@ class DeploymentCommit(DeploymentView):
 
     def get(self, request, *args, **kwargs):
         return self.deployment.commit
-    
+
     def post(self, request, *args, **kwargs):
         try:
             commit = request.POST['commit']

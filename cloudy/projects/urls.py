@@ -14,7 +14,7 @@ urlpatterns = patterns('',
         name='projects_create'),
     url(r'^(?P<pk>\d+)/$', login_required(UpdateProject.as_view()),
         name='projects_update'),
-    url(r'^(?P<pk>\d+)/delete/$', 
+    url(r'^(?P<pk>\d+)/delete/$',
         login_required(DeleteProject.as_view()), name='projects_delete'),
 
     # Deployments
@@ -32,12 +32,12 @@ urlpatterns = patterns('',
         name='projects_deployment_overview'),
 
     # Nodes
-    url(r'^nodes/(?P<pk>\d+)/logs/$', login_required(NodeLogs.as_view()), 
+    url(r'^nodes/(?P<pk>\d+)/logs/$', login_required(NodeLogs.as_view()),
         name='projects_node_logs'),
     url(r'^nodes/(?P<pk>\d+)/delete/$', login_required(DeleteNode.as_view()),
         name='projects_delete_node'),
 
-    # Base variables 
+    # Base variables
     url(r'^base-variables/$', login_required(BaseVariablesList.as_view()),
         name='projects_base_variables_list'),
     url(r'^base-variables/create/$',

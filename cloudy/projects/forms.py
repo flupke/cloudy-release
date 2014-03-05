@@ -1,4 +1,4 @@
-from django import forms 
+from django import forms
 from codemirror.widgets import CodeMirrorTextarea
 
 from .models import Deployment, DeploymentBaseVariables

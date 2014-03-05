@@ -29,7 +29,7 @@ class Project(models.Model):
                     '(path.to.module or path.to.module:function)'),
                 ('python_file', 'Path to a python file'),
             ], default='bash')
-    deployment_script = models.TextField(_('deployment script'), 
+    deployment_script = models.TextField(_('deployment script'),
             help_text='The script will be executed after the repository '
             'checkout, in the checkout directory.', blank=True)
 
@@ -107,7 +107,7 @@ class Deployment(models.Model):
                 ('python', 'Python'),
             ], default='yaml')
     variables = models.TextField(_('deployment variables'), blank=True)
-    redeploy_bit = models.CharField('used to manually force a redeploy', 
+    redeploy_bit = models.CharField('used to manually force a redeploy',
             default=lambda: uuid.uuid4().hex, max_length=32, editable=False)
 
     date_created = models.DateTimeField(auto_now_add=True, db_index=True)
@@ -128,12 +128,12 @@ class Deployment(models.Model):
     def nodes_info(self):
         '''
         Returns a list of tuples condaining summarized nodes informations.
-        
+
         The tuples contain ``(status_label, count, css_class)`` for each
         status.
         '''
         counters = collections.defaultdict(int)
-        css_classes = {} 
+        css_classes = {}
         for node in self.nodes.all():
             label = node.get_last_deployment_status_display()
             css_classes[label] = node.status_css_class()
@@ -164,7 +164,7 @@ class Deployment(models.Model):
         hf.update(self.commit)
         hf.update(self.redeploy_bit)
         return hf.hexdigest()
-    
+
     @cached_property
     def grouped_nodes(self):
         '''
@@ -244,7 +244,7 @@ class DeploymentLogEntry(models.Model):
 
     node = models.ForeignKey(Node)
     date = models.DateTimeField(auto_now_add=True, db_index=True)
-    source_url = models.TextField(_('deployment source'), 
+    source_url = models.TextField(_('deployment source'),
             help_text='the combined repository type, URL and commit')
     type = models.CharField(max_length=255)
     text = models.TextField(null=True)
