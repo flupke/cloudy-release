@@ -1,8 +1,8 @@
-<li>
+<li class='node'>
     <h4>
         <a href="{% url 'projects_node_logs' pk=node.pk %}">{{ node }}</a>
         <span class="label {{ node.status_css_class }}">{{ node.get_last_deployment_status_display }}</span>
-        <a href="{% url 'projects_delete_node' pk=node.pk %}" class="btn btn-default btn-xs">
+        <a class="btn btn-default btn-xs delete_node" data-node-pk="{{ node.pk }}">
             <span class="glyphicon glyphicon-remove"></span> Delete
         </a>
     </h4>

@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from .views import (ProjectsList, CreateProject, UpdateProject, DeleteProject,
         CreateDeployment, UpdateDeployment, DeploymentOverview,
@@ -34,7 +35,7 @@ urlpatterns = patterns('',
     # Nodes
     url(r'^nodes/(?P<pk>\d+)/logs/$', login_required(NodeLogs.as_view()),
         name='projects_node_logs'),
-    url(r'^nodes/(?P<pk>\d+)/delete/$', login_required(DeleteNode.as_view()),
+    url(r'^nodes/delete/$', csrf_exempt(login_required(DeleteNode.as_view())),
         name='projects_delete_node'),
 
     # Base variables

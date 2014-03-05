@@ -1,9 +1,10 @@
 from vanilla import ListView, CreateView, UpdateView, DeleteView, DetailView
 from crispy_forms.layout import Field, Layout
+from django.views.generic import View
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.forms import model_to_dict
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 
 from cloudy.crispy import crispy_context
 from .models import (Project, Deployment, DeploymentLogEntry, Node,
@@ -259,14 +260,13 @@ class NodeLogs(NodeViewsMixin, ListView):
         return qs.filter(node=self.node)
 
 
-class DeleteNode(NodeViewsMixin, DeleteView):
+class DeleteNode(View):
 
-    model = Node
-    heading = 'Delete node'
-
-    def get_success_url(self):
-        return reverse('projects_deployment_overview',
-                kwargs={'pk': self.object.deployment.pk})
+    def post(self, request):
+        pk = request.POST['pk']
+        node = get_object_or_404(Node, pk=pk)
+        node.delete()
+        return HttpResponse()
 
 # ----------------------------------------------------------------------------
 # Base variables

@@ -57,18 +57,35 @@
 
 {% block page_script %}
 <script type="text/javascript">
+    function add_message(message)
+    {
+        // Add an alert message at the top of the page.
+
+        var alert_div = $('<div class="alert alert-success fade in">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+            message +
+            '</div>');
+        $('#messages').append(alert_div);
+    }
+
     $(function()
     {
         $('#trigger_redeploy').click(function()
         {
             $.post('{% url 'api_trigger_redeploy' key=deployment.key %}', function()
             {
-                var alert_div = $('<div class="alert alert-success fade in">' +
-                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
-                    '<strong>Deployment was triggered!</strong> ' +
-                    'Refresh the page to see nodes status.' +
-                    '</div>');
-                $('#messages').append(alert_div);
+                add_message('<strong>Deployment was triggered!</strong> Refresh the page to see nodes status.');
+            });
+        });
+
+        $('.delete_node').click(function()
+        {
+            var node_pk = $(this).data('nodePk'),
+                node_elt = $(this).parents('.node').first();
+            node_elt.remove()
+            $.post('{% url 'projects_delete_node' %}', {pk: node_pk}, function()
+            {
+                add_message('<strong>Node was deleted</strong>');
             });
         });
     });
