@@ -83,10 +83,7 @@
             var node_pk = $(this).data('nodePk'),
                 node_elt = $(this).parents('.node').first();
             node_elt.remove()
-            $.post('{% url 'projects_delete_node' %}', {pk: node_pk}, function()
-            {
-                add_message('<strong>Node was deleted</strong>');
-            });
+            $.post('{% url 'projects_delete_node' %}', {pk: node_pk});
         });
     });
 </script>
