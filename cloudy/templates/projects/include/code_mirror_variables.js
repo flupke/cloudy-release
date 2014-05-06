@@ -14,6 +14,9 @@ $(function()
         } else if (value === 'python') {
             variables_editor.setOption('mode', 'python');
             variables_editor.setOption('smartIndent', true);
+        } else if (value === 'shell') {
+            variables_editor.setOption('mode', 'shell');
+            variables_editor.setOption('smartIndent', true);
         }
     });
 

@@ -8,6 +8,15 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import cached_property
 
 
+DEPLOYMENT_VARIABLES_CHOICES = [
+    ('yaml', 'YAML'),
+    ('json', 'JSON'),
+    ('python', 'Python'),
+    ('shell', 'Shell'),
+]
+DEFAULT_DEPLOYMENT_VARIABLES_TYPE = 'yaml'
+
+
 class Project(models.Model):
     '''
     Contains deployments' common data.
@@ -66,11 +75,8 @@ class DeploymentBaseVariables(models.Model):
     name = models.CharField(_('variables name'), max_length=255,
             db_index=True, unique=True)
     variables_format = models.CharField(_('deployment variables format'),
-            max_length=32, choices=[
-                ('yaml', 'YAML'),
-                ('json', 'JSON'),
-                ('python', 'Python'),
-            ], default='yaml')
+            max_length=32, choices=DEPLOYMENT_VARIABLES_CHOICES,
+            default=DEFAULT_DEPLOYMENT_VARIABLES_TYPE)
     variables = models.TextField(_('deployment variables'), blank=True)
 
     deleted = models.BooleanField(editable=False, default=False, db_index=True)
@@ -101,11 +107,8 @@ class Deployment(models.Model):
     base_variables = models.ForeignKey(DeploymentBaseVariables, null=True,
             blank=True)
     variables_format = models.CharField(_('deployment variables format'),
-            max_length=32, choices=[
-                ('yaml', 'YAML'),
-                ('json', 'JSON'),
-                ('python', 'Python'),
-            ], default='yaml')
+            max_length=32, choices=DEPLOYMENT_VARIABLES_CHOICES,
+            default=DEFAULT_DEPLOYMENT_VARIABLES_TYPE)
     variables = models.TextField(_('deployment variables'), blank=True)
     redeploy_bit = models.CharField('used to manually force a redeploy',
             default=lambda: uuid.uuid4().hex, max_length=32, editable=False)

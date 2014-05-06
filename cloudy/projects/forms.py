@@ -8,7 +8,7 @@ VARIABLES_FIELD = forms.CharField(widget=CodeMirrorTextarea(mode="yaml",
     config={
         'tabMode': 'indent',
         'indentUnit': 4
-    }, theme='mbo', dependencies=('javascript', 'python'),
+    }, theme='mbo', dependencies=('javascript', 'python', 'shell'),
     js_var_format='%s_editor'), required=False, label='Deployment variables')
 
 
