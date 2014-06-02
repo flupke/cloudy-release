@@ -5,3 +5,4 @@ django-crispy-forms==1.4.0
 django-admin-bootstrapped==1.6.3
 South==0.8.4
 -e git+https://github.com/lambdalisue/django-codemirror-widget.git#egg=django-codemirror-widget
+PyYAML==3.11

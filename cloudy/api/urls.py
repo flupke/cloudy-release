@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from django.views.decorators.csrf import csrf_exempt
 
 from .views import (PollDeployment, UpdateNodeStatus, DeploymentCommit,
-        TriggerRedeploy)
+        TriggerRedeploy, EditDeploymentVariables)
 
 
 urlpatterns = patterns('',
@@ -17,4 +17,7 @@ urlpatterns = patterns('',
     url(r'^deployments/(?P<key>[0-9a-f]{32})/trigger-redeploy/$',
         csrf_exempt(TriggerRedeploy.as_view()),
         name='api_trigger_redeploy'),
+    url(r'^deployments/(?P<key>[0-9a-f]{32})/edit-variables/$',
+        csrf_exempt(EditDeploymentVariables.as_view()),
+        name='api_edit_deployment_variables'),
 )

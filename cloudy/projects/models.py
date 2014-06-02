@@ -1,11 +1,15 @@
 import uuid
 import hashlib
 import collections
+import json
+import yaml
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import cached_property
+
+from .exceptions import InvalidOperation, InternalError
 
 
 DEPLOYMENT_VARIABLES_CHOICES = [
@@ -64,7 +68,60 @@ class DeploymentBaseVariablesManager(models.Manager):
         return queryset.filter(deleted=False)
 
 
-class DeploymentBaseVariables(models.Model):
+class DeploymentVariablesContainer(object):
+    '''
+    Mixin class holding common methods for models containing deployment
+    variables.
+    '''
+
+    def vars_dict(self):
+        '''
+        Return the deployment variables as a dictionnary.
+        '''
+        if self.variables_format == 'json':
+            ret = json.loads(self.variables)
+        elif self.variables_format == 'yaml':
+            ret = yaml.load(self.variables)
+        elif self.variables_format == 'python':
+            code = compile(self.variables, '<deployment variables>', 'exec')
+            code_globals = {}
+            exec(code, code_globals)
+            code_globals.pop('__builtins__', None)
+            ret = code_globals
+        elif self.variables_format == 'shell':
+            raise InvalidOperation('cannot convert shell deployment '
+                    'variables to a dict')
+        else:
+            raise InternalError('unknwon variables format "%s"' %
+                    self.variables_format)
+        if not isinstance(ret, collections.Mapping):
+            raise InvalidOperation('deployment variables are not a mapping')
+        return ret
+
+    def set_vars_from_dict(self, dct):
+        '''
+        Set the deployment variables to the encoded form of dict *dct*.
+        '''
+        if not isinstance(dct, collections.Mapping):
+            raise InvalidOperation('deployment variables must be a mapping')
+        if self.variables_format == 'json':
+            self.variables = json.dumps(dct, indent=4)
+        elif self.variables_format == 'yaml':
+            self.variables = yaml.dump(dct)
+        elif self.variables_format == 'python':
+            lines = []
+            for key, value in dct.items():
+                lines.append('%s = %r' % (key, value))
+            self.variables = '\n'.join(lines)
+        elif self.variables_format == 'shell':
+            raise InvalidOperation('cannot set shell deployment '
+                    'from a dict')
+        else:
+            raise InternalError('unknwon variables format "%s"' %
+                    self.variables_format)
+
+
+class DeploymentBaseVariables(models.Model, DeploymentVariablesContainer):
     '''
     Can be used to define common deployment variables to be merged with
     variables in :class:`Deployment`.
@@ -88,7 +145,7 @@ class DeploymentBaseVariables(models.Model):
         ordering = ['name']
 
 
-class Deployment(models.Model):
+class Deployment(models.Model, DeploymentVariablesContainer):
     '''
     Defines how a project is deployed on a specific set of nodes.
     '''

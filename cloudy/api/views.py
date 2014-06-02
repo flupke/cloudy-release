@@ -8,6 +8,8 @@ from django.forms.models import model_to_dict
 from django.utils import timezone
 
 from ..projects.models import Deployment, Node, DeploymentLogEntry
+from ..projects.exceptions import InvalidOperation
+from ..projects import varops
 
 
 class ApiView(View):
@@ -185,4 +187,48 @@ class TriggerRedeploy(DeploymentView):
 
     def post(self, request, *args, **kwargs):
         self.deployment.trigger_redeploy()
+        return 'OK'
+
+
+class EditDeploymentVariables(DeploymentView):
+    '''
+    Modify deployment variables.
+
+    :param operation: the edit operation. Supported operations are:
+        * set_add
+        * set_discard
+    :param path: target of the edition in deployment variables dict
+    :param value: the json-encoded value passed to the operation
+    '''
+
+    required_parameters = ['operation', 'path', 'value']
+    valid_operations = set(['set_add', 'set_discard'])
+
+    def post(self, request, *args, **kwargs):
+        operation = request.POST['operation']
+        path = request.POST['path']
+        value = request.POST['value']
+
+        # Validate parameters
+        if operation not in self.valid_operations:
+            return 'invalid operation: %s' % operation
+        try:
+            value = json.loads(value)
+        except:
+            return 'the "value" parameter is not valid JSON'
+
+        # Apply edit and save it to the model
+        try:
+            vars_dict = self.deployment.vars_dict()
+        except InvalidOperation:
+            return 'deployment variales do not contain a dict and '\
+                    'cannot be edited'
+        operation_func = getattr(varops, operation)
+        try:
+            operation_func(vars_dict, path, value)
+        except KeyError:
+            return 'invalid path: %s' % path
+        self.deployment.set_vars_from_dict(vars_dict)
+        self.deployment.save(update_fields=['variables'])
+
         return 'OK'
