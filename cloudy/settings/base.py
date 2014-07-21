@@ -97,5 +97,5 @@ LOGIN_REDIRECT_URL = 'projects_list'
 # Proxy settings
 SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
 
-# Hide nodes that have not been seen since this number of days
+# Hide nodes that have not been seen since this number of hours
 HIDE_NODES_AFTER = 1

@@ -246,7 +246,7 @@ class Deployment(models.Model, DeploymentVariablesContainer):
 
     @cached_property
     def alive_nodes(self):
-        max_age = datetime.timedelta(settings.HIDE_NODES_AFTER)
+        max_age = datetime.timedelta(hours=settings.HIDE_NODES_AFTER)
         now = timezone.now()
         min_last_seen = now - max_age
         return self.nodes.filter(last_seen__gt=min_last_seen)
