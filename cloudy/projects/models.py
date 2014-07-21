@@ -3,11 +3,14 @@ import hashlib
 import collections
 import json
 import yaml
+import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import cached_property
+from django.utils import timezone
+from django.conf import settings
 
 from .exceptions import InvalidOperation, InternalError
 
@@ -194,7 +197,7 @@ class Deployment(models.Model, DeploymentVariablesContainer):
         '''
         counters = collections.defaultdict(int)
         css_classes = {}
-        for node in self.nodes.all():
+        for node in self.alive_nodes:
             label = node.get_last_deployment_status_display()
             css_classes[label] = node.status_css_class()
             counters[label] += 1
@@ -231,7 +234,7 @@ class Deployment(models.Model, DeploymentVariablesContainer):
         Returns this deployment's nodes grouped by similarities.
         '''
         groups = collections.defaultdict(list)
-        for node in self.nodes.all():
+        for node in self.alive_nodes:
             key = (node.last_deployment_status, node.last_deployed_source_url,
                     node.client_version)
             groups[key].append(node)
@@ -240,6 +243,13 @@ class Deployment(models.Model, DeploymentVariablesContainer):
     def trigger_redeploy(self):
         self.redeploy_bit = uuid.uuid4().hex
         self.save(update_fields=['redeploy_bit'])
+
+    @cached_property
+    def alive_nodes(self):
+        max_age = datetime.timedelta(settings.HIDE_NODES_AFTER)
+        now = timezone.now()
+        min_last_seen = now - max_age
+        return self.nodes.filter(last_seen__gt=min_last_seen)
 
     def __unicode__(self):
         return self.name
