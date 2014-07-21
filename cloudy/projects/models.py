@@ -283,6 +283,7 @@ class Node(models.Model):
             null=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
+    last_seen = models.DateTimeField(auto_now=True, db_index=True)
 
     def status_css_class(self):
         return self.STATUS_CSS_CLASSES[self.last_deployment_status]
