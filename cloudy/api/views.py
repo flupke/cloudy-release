@@ -80,10 +80,11 @@ class PollDeployment(DeploymentView):
         # Get or create Node object if node_name was passed in the URL
         if 'node_name' in request.GET:
             node_name = request.GET['node_name']
-            node, _ = Node.objects.get_or_create(deployment=self.deployment,
-                    name=node_name)
-            node.last_seen = timezone.now()
-            node.save(update_fields=['last_seen'])
+            node, created = Node.objects.get_or_create(
+                    deployment=self.deployment, name=node_name)
+            if not created:
+                node.last_seen = timezone.now()
+                node.save(update_fields=['last_seen'])
         # Build response dict
         data = model_to_dict(self.deployment.project)
         data.update(model_to_dict(self.deployment))
