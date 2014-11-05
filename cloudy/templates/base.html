@@ -39,6 +39,7 @@
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
+                <li{% if menu_item == 'users_profile' %} class="active"{% endif %}><a href="{% url 'users_profile' user.profile.pk %}">Profile</a></li>
                 <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
                 <li><a href="{% url 'login' %}">Login</a></li>

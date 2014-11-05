@@ -1,4 +1,3 @@
-import uuid
 import hashlib
 import collections
 import json
@@ -12,6 +11,7 @@ from django.utils.functional import cached_property
 from django.utils import timezone
 from django.conf import settings
 
+from cloudy.utils import uuid_hex
 from .exceptions import InvalidOperation, InternalError
 
 
@@ -22,10 +22,6 @@ DEPLOYMENT_VARIABLES_CHOICES = [
     ('shell', 'Shell'),
 ]
 DEFAULT_DEPLOYMENT_VARIABLES_TYPE = 'yaml'
-
-
-def uuid_hex():
-    return uuid.uuid4().hex
 
 
 class Project(models.Model):
@@ -245,7 +241,7 @@ class Deployment(models.Model, DeploymentVariablesContainer):
         return sorted(groups.values(), key=lambda g: -len(g))
 
     def trigger_redeploy(self):
-        self.redeploy_bit = uuid.uuid4().hex
+        self.redeploy_bit = uuid_hex()
         self.save(update_fields=['redeploy_bit'])
 
     @cached_property

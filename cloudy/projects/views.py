@@ -21,7 +21,8 @@ class ProjectsMixin(object):
     breadcrumbs = []
 
     def get_context_data(self, **context):
-        if self.request.path.startswith('/projects/base-variables/'):
+        path = self.request.path
+        if path.startswith('/projects/base-variables/'):
             menu_item = 'base_variables'
         else:
             menu_item = 'projects'
