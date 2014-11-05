@@ -1,6 +1,6 @@
 from django.test import TestCase
-from .varops import get_from_dict, set_in_dict, set_add, set_discard
 
+from ..varops import get_from_dict, set_in_dict, set_add, set_discard
 
 
 class VarOpsTests(TestCase):
