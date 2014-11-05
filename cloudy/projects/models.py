@@ -24,13 +24,17 @@ DEPLOYMENT_VARIABLES_CHOICES = [
 DEFAULT_DEPLOYMENT_VARIABLES_TYPE = 'yaml'
 
 
+def uuid_hex():
+    return uuid.uuid4().hex
+
+
 class Project(models.Model):
     '''
     Contains deployments' common data.
     '''
 
     name = models.CharField(_('project name'), max_length=255)
-    key = models.CharField(_('key'), default=lambda: uuid.uuid4().hex,
+    key = models.CharField(_('key'), default=uuid_hex,
             max_length=32, editable=False, db_index=True)
 
     repository_type = models.CharField(_('repository type'), max_length=255,
@@ -155,7 +159,7 @@ class Deployment(models.Model, DeploymentVariablesContainer):
 
     project = models.ForeignKey(Project, related_name='deployments')
     name = models.CharField(_('deployment name'), max_length=255, db_index=True)
-    key = models.CharField(_('key'), default=lambda: uuid.uuid4().hex,
+    key = models.CharField(_('key'), default=uuid_hex,
             max_length=32, editable=False, db_index=True)
 
     base_dir = models.CharField(_('checkout base dir'), max_length=2047,
@@ -171,7 +175,7 @@ class Deployment(models.Model, DeploymentVariablesContainer):
             default=DEFAULT_DEPLOYMENT_VARIABLES_TYPE)
     variables = models.TextField(_('deployment variables'), blank=True)
     redeploy_bit = models.CharField('used to manually force a redeploy',
-            default=lambda: uuid.uuid4().hex, max_length=32, editable=False)
+            default=uuid_hex, max_length=32, editable=False)
 
     date_created = models.DateTimeField(auto_now_add=True, db_index=True)
     date_modified = models.DateTimeField(auto_now=True)

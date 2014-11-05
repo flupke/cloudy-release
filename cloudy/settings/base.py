@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
 
     'crispy_forms',
-    'south',
 
     'cloudy.projects',
     'cloudy.users',
