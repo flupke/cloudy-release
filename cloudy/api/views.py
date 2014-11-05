@@ -1,7 +1,9 @@
 import json
+import collections
 
 from django.views.generic import View
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import (HttpResponse, HttpResponseBadRequest,
+        HttpResponseForbidden)
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
@@ -20,6 +22,7 @@ class ApiView(View):
     model = None
     object_attr = None
     required_parameters = []
+    operation = None
 
     def dispatch(self, request, key, *args, **kwargs):
         # Get the main object from key in request path
@@ -28,8 +31,10 @@ class ApiView(View):
 
         # Validate request parameters
         if request.method == 'GET':
+            params = request.GET
             request_parameters = set(request.GET)
         elif request.method == 'POST':
+            params = request.POST
             request_parameters = set(request.POST)
         else:
             return HttpResponseBadRequest('%s HTTP method not supported '
@@ -47,6 +52,19 @@ class ApiView(View):
                     ', '.join(unknown_parameters))
         if errors:
             return HttpResponseBadRequest('\n'.join(errors))
+
+        # Check access
+        if hasattr(obj, 'can_do'):
+            if self.operation is None:
+                raise Exception('subclasses of ApiView accessing objects with '
+                        'ACLs must define the "operation" attribute')
+            if isinstance(self.operation, collections.Mapping):
+                operation = self.operation[request.method]
+            else:
+                operation = self.operation
+            auth_key = params.get('auth_key')
+            if not obj.can_do(auth_key, operation):
+                return HttpResponseForbidden('access denied')
 
         # Run the request handler, convert response to JSON if necessary
         response = super(ApiView, self).dispatch(request, *args, **kwargs)
@@ -75,6 +93,8 @@ class PollDeployment(DeploymentView):
         the client node name, creates a new node if there was not already a
         node in this deployment with this name
     '''
+
+    operation = 'read'
 
     def get(self, request, *args, **kwargs):
         # Get or create Node object if node_name was passed in the URL
@@ -129,6 +149,7 @@ class UpdateNodeStatus(DeploymentView):
 
     required_parameters = ['node_name', 'status', 'source_url',
             'client_version']
+    operation = 'read'
 
     def post(self, request, *args, **kwargs):
         # Get Node object
@@ -170,6 +191,11 @@ class DeploymentCommit(DeploymentView):
     Used to retrieve or update a deployment's commit.
     '''
 
+    operation = {
+        'GET': 'read',
+        'POST': 'write',
+    }
+
     def get(self, request, *args, **kwargs):
         return self.deployment.commit
 
@@ -187,6 +213,8 @@ class TriggerRedeploy(DeploymentView):
     '''
     Used to trigger a redeploy.
     '''
+
+    operation = 'write'
 
     def post(self, request, *args, **kwargs):
         self.deployment.trigger_redeploy()
@@ -206,6 +234,7 @@ class EditDeploymentVariables(DeploymentView):
 
     required_parameters = ['operation', 'path', 'value']
     valid_operations = set(['set_add', 'set_discard'])
+    operation = 'write'
 
     def post(self, request, *args, **kwargs):
         operation = request.POST['operation']

@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.conf import settings
 
 from cloudy.utils import uuid_hex
+from cloudy.users.models import UserProfile
 from .exceptions import InvalidOperation, InternalError
 
 
@@ -153,6 +154,15 @@ class Deployment(models.Model, DeploymentVariablesContainer):
     Defines how a project is deployed on a specific set of nodes.
     '''
 
+    PUBLIC = 0
+    PUBLIC_READ_ACL_WRITE = 1
+    READ_WRITE_ACL = 2
+    ACL_CHOICES = (
+        (PUBLIC, 'Public'),
+        (PUBLIC_READ_ACL_WRITE, 'Public read, ACL write'),
+        (READ_WRITE_ACL, 'ACL read and write'),
+    )
+
     project = models.ForeignKey(Project, related_name='deployments')
     name = models.CharField(_('deployment name'), max_length=255, db_index=True)
     key = models.CharField(_('key'), default=uuid_hex,
@@ -172,6 +182,12 @@ class Deployment(models.Model, DeploymentVariablesContainer):
     variables = models.TextField(_('deployment variables'), blank=True)
     redeploy_bit = models.CharField('used to manually force a redeploy',
             default=uuid_hex, max_length=32, editable=False)
+
+    # Access control
+    acl_type = models.SmallIntegerField(choices=ACL_CHOICES, default=PUBLIC,
+            verbose_name='ACL type')
+    acl = models.ManyToManyField(User, blank=True, related_name='deployments',
+            verbose_name='ACL')
 
     date_created = models.DateTimeField(auto_now_add=True, db_index=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -250,6 +266,34 @@ class Deployment(models.Model, DeploymentVariablesContainer):
         now = timezone.now()
         min_last_seen = now - max_age
         return self.nodes.filter(last_seen__gt=min_last_seen)
+
+    def user_in_acl(self, auth_key):
+        '''
+        Return True if user identified by *auth_key* is present in this
+        deployment's ACL.
+        '''
+        try:
+            profile = UserProfile.objects.get(auth_key=auth_key)
+        except UserProfile.DoesNotExist:
+            return False
+        return profile.user in self.acl.all()
+
+    def can_do(self, auth_key, operation):
+        '''
+        Return a boolean indicating if user identified by *auth_key* can access
+        this deployment for *operation* (which can be "read" or "write").
+        '''
+        if operation not in ('read', 'write'):
+            raise ValueError('invalid operation: %s' % operation)
+        if self.acl_type == self.PUBLIC:
+            return True
+        elif self.acl_type == self.PUBLIC_READ_ACL_WRITE:
+            if operation == 'read':
+                return True
+            return self.user_in_acl(auth_key)
+        elif self.acl_type == self.READ_WRITE_ACL:
+            return self.user_in_acl(auth_key)
+        raise NotImplementedError('ACL type not handled: %s' % self.acl_type)
 
     def __unicode__(self):
         return self.name
