@@ -85,7 +85,7 @@ class DeploymentVariablesContainer(object):
         if self.variables_format == 'json':
             ret = json.loads(self.variables)
         elif self.variables_format == 'yaml':
-            ret = yaml.load(self.variables)
+            ret = yaml.safe_load(self.variables)
         elif self.variables_format == 'python':
             code = compile(self.variables, '<deployment variables>', 'exec')
             code_globals = {}
