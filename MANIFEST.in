@@ -1,0 +1,5 @@
+include README.rst
+include NEWS.rst
+include LICENSE.md
+recursive-include src/cloudy/static *
+recursive-include src/cloudy/templates *
