@@ -196,8 +196,11 @@ class Deployment(models.Model, DeploymentVariablesContainer):
         '''
         Returns an URL representing what is deployed from the VCS.
         '''
-        return '%s://%s@%s' % (self.project.repository_type,
-                self.project.repository_url, self.commit)
+        if '://' not in self.project.repository_url:
+            prefix = '%s://' % self.project.repository_type
+        else:
+            prefix = ''
+        return '%s%s@%s' % (prefix, self.project.repository_url, self.commit)
 
     @models.permalink
     def get_absolute_url(self):
