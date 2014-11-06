@@ -8,4 +8,4 @@ from cloudy.utils import uuid_hex
 class UserProfile(models.Model):
 
     user = AutoOneToOneField(User, related_name='profile')
-    auth_key = models.CharField(max_length=32, default=uuid_hex, db_index=True)
+    secret = models.CharField(max_length=32, default=uuid_hex, db_index=True)

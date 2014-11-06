@@ -9,9 +9,9 @@ class UserProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
-        self.fields['auth_key'].widget.attrs['readonly'] = True
+        self.fields['secret'].widget.attrs['readonly'] = True
         self.helper = FormHelper()
-        self.helper.add_input(Submit('gen_auth_key', 'Generate new auth key'))
+        self.helper.add_input(Submit('gen_secret', 'Generate new auth key'))
 
     class Meta:
         model = UserProfile

@@ -25,7 +25,7 @@ class UpdateUserProfile(UpdateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        if 'gen_auth_key' in self.request.POST:
-            self.object.auth_key = uuid_hex()
+        if 'gen_secret' in self.request.POST:
+            self.object.secret = uuid_hex()
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())

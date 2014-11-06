@@ -34,25 +34,25 @@ def test_auth(db, client):
     resp = client.post(trigger_redeploy_url)
     assert resp.status_code == 403
     resp = client.get(poll_url,
-            {'auth_key': user.profile.auth_key})
+            {'secret': user.profile.secret})
     assert resp.status_code == 403
 
     deployment.acl_type = Deployment.PUBLIC_READ_ACL_WRITE
     deployment.acl = [user]
     deployment.save()
 
-    resp = client.get(poll_url, {'auth_key': user.profile.auth_key})
+    resp = client.get(poll_url, {'secret': user.profile.secret})
     assert resp.status_code == 200
     resp = client.post(trigger_redeploy_url,
-            {'auth_key': user.profile.auth_key})
+            {'secret': user.profile.secret})
     assert resp.status_code == 200
 
     deployment.acl_type = Deployment.READ_WRITE_ACL
     deployment.save()
 
     resp = client.get(poll_url,
-            {'auth_key': user.profile.auth_key})
+            {'secret': user.profile.secret})
     assert resp.status_code == 200
     resp = client.post(trigger_redeploy_url,
-            {'auth_key': user.profile.auth_key})
+            {'secret': user.profile.secret})
     assert resp.status_code == 200

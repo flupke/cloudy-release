@@ -62,8 +62,8 @@ class ApiView(View):
                 operation = self.operation[request.method]
             else:
                 operation = self.operation
-            auth_key = params.get('auth_key')
-            if not obj.can_do(auth_key, operation):
+            secret = params.get('secret')
+            if not obj.can_do(secret, operation):
                 return HttpResponseForbidden('access denied')
 
         # Run the request handler, convert response to JSON if necessary
