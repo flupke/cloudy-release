@@ -1,0 +1,7 @@
+deployment_groups:
+    test:
+        branch: __current__
+        push: True
+        push_tags: True
+        deployments:
+            - http://127.0.0.1:8000/api/deployments/09635b933dd842dcbc55b7791e41db92/poll/
