@@ -55,7 +55,8 @@ setup(
     url='https://github.com/flupke/cloudy-release',
     description='A flexible deployment system',
     long_description=open('README.rst').read(),
-    packages=find_packages(),
+    packages=find_packages('src'),
+    package_dir={'':'src'},
     zip_safe=False,
     install_requires=install_requires,
     extras_require={
