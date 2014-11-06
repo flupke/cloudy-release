@@ -12,6 +12,8 @@ from django.utils import timezone
 from ..projects.models import Deployment, Node, DeploymentLogEntry
 from ..projects.exceptions import InvalidOperation
 from ..projects import varops
+from ..users.models import UserProfile
+from ..logs import add_log
 
 
 class ApiView(View):
@@ -55,6 +57,7 @@ class ApiView(View):
 
         # Check access
         if hasattr(obj, 'can_do'):
+            # Get secret from request parameters or headers
             if self.operation is None:
                 raise Exception('subclasses of ApiView accessing objects with '
                         'ACLs must define the "operation" attribute')
@@ -66,7 +69,16 @@ class ApiView(View):
                 _, _, secret = request.META['HTTP_AUTHORIZATION'].partition(' ')
             else:
                 secret = params.get('secret')
-            if not obj.can_do(secret, operation):
+
+            # Retrieve user
+            try:
+                profile = UserProfile.objects.get(secret=secret)
+                self.user = profile.user
+            except UserProfile.DoesNotExist:
+                self.user = None
+
+            # Check ACL
+            if not obj.can_do(self.user, operation):
                 return HttpResponseForbidden('access denied')
 
         # Run the request handler, convert response to JSON if necessary
@@ -209,6 +221,7 @@ class DeploymentCommit(DeploymentView):
             return HttpResponseBadRequest('missing parameter: commit')
         self.deployment.commit = commit
         self.deployment.save()
+        add_log('{user} pushed commit {}', commit, user=self.user)
         return 'OK'
 
 

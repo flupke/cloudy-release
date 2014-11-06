@@ -7,7 +7,7 @@ register = template.Library()
 @register.filter
 def truncate_vcs_url(url, commit_len=6):
     '''
-    Truncate a VCS *url* so that commit part length does not exceeds
+    Truncate a VCS *url* so that commit part length does not exceed
     *commit_len*.
     '''
     if url is None:

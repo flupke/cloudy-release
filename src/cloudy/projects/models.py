@@ -12,7 +12,6 @@ from django.utils import timezone
 from django.conf import settings
 
 from cloudy.utils import uuid_hex
-from cloudy.users.models import UserProfile
 from .exceptions import InvalidOperation, InternalError
 
 
@@ -270,21 +269,10 @@ class Deployment(models.Model, DeploymentVariablesContainer):
         min_last_seen = now - max_age
         return self.nodes.filter(last_seen__gt=min_last_seen)
 
-    def user_in_acl(self, secret):
+    def can_do(self, user, operation):
         '''
-        Return True if user identified by *secret* is present in this
-        deployment's ACL.
-        '''
-        try:
-            profile = UserProfile.objects.get(secret=secret)
-        except UserProfile.DoesNotExist:
-            return False
-        return profile.user in self.acl.all()
-
-    def can_do(self, secret, operation):
-        '''
-        Return a boolean indicating if user identified by *secret* can access
-        this deployment for *operation* (which can be "read" or "write").
+        Return a boolean indicating if *user* can access this deployment for
+        *operation* (which can be "read" or "write").
         '''
         if operation not in ('read', 'write'):
             raise ValueError('invalid operation: %s' % operation)
@@ -293,9 +281,9 @@ class Deployment(models.Model, DeploymentVariablesContainer):
         elif self.acl_type == self.PUBLIC_READ_ACL_WRITE:
             if operation == 'read':
                 return True
-            return self.user_in_acl(secret)
+            return user in self.acl.all()
         elif self.acl_type == self.READ_WRITE_ACL:
-            return self.user_in_acl(secret)
+            return user in self.acl.all()
         raise NotImplementedError('ACL type not handled: %s' % self.acl_type)
 
     def __unicode__(self):

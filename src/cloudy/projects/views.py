@@ -7,6 +7,7 @@ from django.forms import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect
 
 from cloudy.crispy import crispy_context
+from cloudy.logs import add_log
 from .models import (Project, Deployment, DeploymentLogEntry, Node,
         DeploymentBaseVariables)
 from .forms import EditDeploymentForm, EditDeploymentBaseVariablesForm
@@ -89,6 +90,11 @@ class UpdateProject(EditProjectMixin, UpdateView):
         ('Projects', reverse_lazy('projects_list')),
         ('Configure project', None),
     ]
+
+    def form_valid(self, form):
+        add_log('{user} edited project "{object}"', object=self.object,
+                user=self.request.user)
+        return super(UpdateProject, self).form_valid(form)
 
 
 class DeleteProject(ProjectsMixin, DeleteView):
