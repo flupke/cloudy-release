@@ -52,3 +52,7 @@ class NginxCloudyDeployScript(PythonDeployScript):
         sudo('ln', '-sfn', nginx_conf_file, nginx_conf_symlink)
         sudo('/etc/init.d/nginx', 'reload')
 
+
+if __name__ == '__main__':
+    script = NginxCloudyDeployScript()
+    script.run()
