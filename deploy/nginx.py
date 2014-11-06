@@ -35,6 +35,10 @@ class NginxCloudyDeployScript(PythonDeployScript):
             render_template(src, dst, context=context, use_jinja=True,
                     use_sudo=True)
 
+        # Collect static files
+        self.venv.run('python', 'manage.py', 'collectstatic', '--noinput',
+                env={'STATIC_ROOT': self.dvars['cloudy']['static_root']})
+
     def get_config_context(self, **kwargs):
         context = self.dvars.copy()
         context.update(kwargs)

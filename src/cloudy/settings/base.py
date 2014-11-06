@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import os
 import os.path as op
 BASE_DIR = op.abspath(op.join(op.dirname(__file__), '..'))
 
@@ -82,6 +83,7 @@ DATETIME_FORMAT = 'Y-m-d H:i:s'
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [op.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.environ.get('STATIC_ROOT')
 
 # Template settings
 TEMPLATE_DIRS = [op.join(BASE_DIR, 'templates')]
