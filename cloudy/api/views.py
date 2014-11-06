@@ -62,7 +62,10 @@ class ApiView(View):
                 operation = self.operation[request.method]
             else:
                 operation = self.operation
-            secret = params.get('secret')
+            if 'HTTP_AUTHORIZATION' in request.META:
+                _, _, secret = request.META['HTTP_AUTHORIZATION'].partition(' ')
+            else:
+                secret = params.get('secret')
             if not obj.can_do(secret, operation):
                 return HttpResponseForbidden('access denied')
 
