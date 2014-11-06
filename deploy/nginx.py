@@ -28,6 +28,9 @@ class NginxCloudyDeployScript(PythonDeployScript):
                 except KeyError:
                     raise ValueError('deployment variable not found "%s"' %
                             dst_path)
+            dst_dir = op.dirname(dst)
+            if not op.isdir(dst_dir):
+                sudo('mkdir', dst_dir)
             context = self.get_config_context()
             render_template(src, dst, context=context, use_jinja=True,
                     use_sudo=True)
