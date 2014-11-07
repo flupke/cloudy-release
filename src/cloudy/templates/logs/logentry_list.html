@@ -14,7 +14,7 @@
         {% for entry in logs %}
         <tr>
             <td class="date">{{ entry.timestamp }}</td>
-            <td>{{ entry.user }}</td>
+            <td><a href="{{ entry.user.profile.get_absolute_url }}">{{ entry.user }}</a></td>
             <td>{{ entry }}</td>
             <td>
                 {% if entry.link %}
