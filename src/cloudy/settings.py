@@ -8,11 +8,18 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
 import os.path as op
-BASE_DIR = op.abspath(op.join(op.dirname(__file__), '..'))
 
+import environ
+
+# Load environment
+env = environ.Env(
+    DEBUG=(bool, False),
+    STATIC_ROOT=(str, None),
+)
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = op.abspath(op.join(op.dirname(__file__), '..'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -21,7 +28,7 @@ BASE_DIR = op.abspath(op.join(op.dirname(__file__), '..'))
 SECRET_KEY = '%lg!q15vb4=-t=m3ph8@5-=c#r-8r&$byf3g3^(5-w%xp(df!u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 TEMPLATE_DEBUG = True
 
@@ -84,7 +91,7 @@ DATETIME_FORMAT = 'Y-m-d H:i:s'
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [op.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.environ.get('STATIC_ROOT')
+STATIC_ROOT = env('STATIC_ROOT')
 
 # Template settings
 TEMPLATE_DIRS = [op.join(BASE_DIR, 'templates')]
