@@ -43,6 +43,9 @@ class NginxCloudyDeployScript(PythonDeployScript):
         self.venv.run('python', 'manage.py', 'collectstatic', '--noinput',
                 env={'STATIC_ROOT': self.dvars['cloudy']['static_root']})
 
+        # Run migrations
+        self.venv.run('python', 'manage.py', 'migrate', '--noinput')
+
     def get_config_context(self, **kwargs):
         context = self.dvars.copy()
         context.update(kwargs)
