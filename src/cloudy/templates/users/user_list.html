@@ -23,13 +23,9 @@
                 <a href="{% url 'users_profile' pk=user.profile.pk %}">{{ user }} {% if user.email %}&lt;{{ user.email }}&gt;{% endif %}</a>
             </td>
             <td>
-                <ul class="list-unstyled">
-                    {% for deployment in user.deployments.all %}
-                    <li>
-                        <a href="{% url 'projects_update_deployment' deployment.pk %}">{{ deployment.project }}/{{ deployment }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
+                {% for deployment in user.deployments.all %}
+                <a href="{% url 'projects_update_deployment' deployment.pk %}">{{ deployment.project }}/{{ deployment }}</a>
+                {% endfor %}
             </td>
         </tr>
         {% endfor %}
