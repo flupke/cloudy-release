@@ -1,4 +1,5 @@
-from . import add_log
+from . import add_log, get_object_link
+from .models import LogEntry
 
 
 class LoggingMixinBase(object):
@@ -49,9 +50,15 @@ class LogDeletionMixin(LoggingMixinBase):
     log_message = '{user} deleted {model_name} {object_name}'
 
     def post(self, request, *args, **kwargs):
-        resp = super(LogDeletionMixin, self).post(request, *args, **kwargs)
+        # Remove dead links
+        self.object = self.get_object()
+        link = get_object_link(self.object)
+        if link is not None:
+            LogEntry.objects.filter(link=link).update(link=None)
+
         object_name = self.get_logged_object_name()
         add_log(self.log_message, user=self.request.user,
                 model_name=self.model.__name__.lower(),
                 object_name=object_name)
-        return resp
+
+        return super(LogDeletionMixin, self).post(request, *args, **kwargs)

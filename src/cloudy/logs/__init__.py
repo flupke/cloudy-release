@@ -29,13 +29,15 @@ def add_log(text, *args, **kwargs):
 
     # Generate link if an object is passed
     obj = kwargs.get('object')
-    if obj is not None and hasattr(obj, 'get_absolute_url'):
-        link = obj.get_absolute_url()
-    else:
-        link = None
+    link = get_object_link(obj)
 
     # Format text
     text = text.format(*args, **kwargs)
 
     # Create log entry
     return LogEntry.objects.create(text=text, user=user, link=link)
+
+
+def get_object_link(obj):
+    if obj is not None and hasattr(obj, 'get_absolute_url'):
+        return obj.get_absolute_url()

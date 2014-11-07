@@ -4,10 +4,10 @@ from django.contrib.auth.models import User
 
 class LogEntry(models.Model):
 
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
     text = models.TextField()
     user = models.ForeignKey(User, null=True, related_name='logs')
-    link = models.CharField(max_length=255, null=True)
+    link = models.CharField(max_length=255, null=True, db_index=True)
 
     def __unicode__(self):
         return self.text
