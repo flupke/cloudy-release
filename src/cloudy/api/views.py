@@ -219,9 +219,13 @@ class DeploymentCommit(DeploymentView):
             commit = request.POST['commit']
         except KeyError:
             return HttpResponseBadRequest('missing parameter: commit')
+        if self.deployment.commit != commit:
+            add_log('{user} deployed {project}/{deployment}@{commit}',
+                    project=self.deployment.project,
+                    deployment=self.deployment, commit=commit, user=self.user,
+                    object=self.deployment)
         self.deployment.commit = commit
         self.deployment.save()
-        add_log('{user} pushed commit {}', commit, user=self.user)
         return 'OK'
 
 
@@ -234,6 +238,9 @@ class TriggerRedeploy(DeploymentView):
 
     def post(self, request, *args, **kwargs):
         self.deployment.trigger_redeploy()
+        add_log('{user} triggered a redeploy for {project}/{deployment}',
+                project=self.deployment.project, deployment=self.deployment,
+                user=self.user, object=self.deployment)
         return 'OK'
 
 
@@ -278,5 +285,9 @@ class EditDeploymentVariables(DeploymentView):
             return 'invalid path: %s' % path
         self.deployment.set_vars_from_dict(vars_dict)
         self.deployment.save(update_fields=['variables'])
+
+        add_log('{user} edited {project}/{deployment} deployment variables',
+                project=self.deployment.project, deployment=self.deployment,
+                user=self.user, object=self.deployment)
 
         return 'OK'
