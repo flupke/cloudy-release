@@ -26,7 +26,7 @@
                 <ul class="list-unstyled">
                     {% for deployment in user.deployments.all %}
                     <li>
-                        <a href="{% url 'projects_update_deployment' deployment.pk %}">{{ deployment }}</a>
+                        <a href="{% url 'projects_update_deployment' deployment.pk %}">{{ deployment.project }}/{{ deployment }}</a>
                     </li>
                     {% endfor %}
                 </ul>
