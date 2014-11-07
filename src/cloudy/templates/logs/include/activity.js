@@ -1,4 +1,4 @@
 $(function()
 {
-    $('#logs .list-group-item').tooltip();
+    $('#logs_activity .list-group-item').tooltip();
 });
