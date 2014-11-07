@@ -233,6 +233,7 @@ class NodeLogs(NodeViewsMixin, ListView):
 
     model = DeploymentLogEntry
     context_object_name = 'entries'
+    paginate_by = 10
 
     @property
     def heading(self):
