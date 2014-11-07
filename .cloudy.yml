@@ -5,3 +5,9 @@ deployment_groups:
         push_tags: True
         deployments:
             - http://127.0.0.1:8000/api/deployments/09635b933dd842dcbc55b7791e41db92/poll/
+    develop:
+        branch: __current__
+        push: True
+        push_tags: True
+        deployments:
+            - https://cloudy.stupeflix.com/api/deployments/18a6d407c9c54184b8162a451b1ec226/poll/
