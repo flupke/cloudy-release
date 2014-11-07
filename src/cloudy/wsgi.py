@@ -7,11 +7,12 @@ For more information on this file, see
 https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 """
 
+import gevent.monkey
+gevent.monkey.patch_all()
+
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cloudy.settings")
 
-import gevent.monkey
-gevent.monkey.patch_all()
 import gevent_psycopg2
 gevent_psycopg2.monkey_patch()
 
