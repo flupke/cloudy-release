@@ -31,6 +31,7 @@ install_requires = [
     'gevent-psycopg2==0.0.3',
     'django-annoying==0.8.0',
     'uwsgi==2.0.8',
+    'django-environ==0.3.0',
 ]
 
 
