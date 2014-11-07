@@ -16,6 +16,7 @@ import environ
 env = environ.Env(
     DEBUG=(bool, False),
     STATIC_ROOT=(str, None),
+    ALLOWED_HOSTS=(list, []),
 )
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -32,8 +33,7 @@ DEBUG = env('DEBUG')
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
 # Application definition
 
