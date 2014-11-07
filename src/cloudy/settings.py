@@ -49,7 +49,6 @@ INSTALLED_APPS = (
 
     'crispy_forms',
 
-    'cloudy',
     'cloudy.projects',
     'cloudy.users',
     'cloudy.api',
