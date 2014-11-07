@@ -1,0 +1,12 @@
+<div id="logs" class="panel panel-default">
+    <div class="panel-heading">Activity log</div>
+        <ul class="list-group">
+            {% for entry in logs %}
+            <li class="list-group-item" data-toggle="tooltip" data-placement="left" title="{{ entry.timestamp }}">
+                {% if entry.link %}<a href="{{ entry.link }}">{% endif %}
+                {{ entry }}
+                {% if entry.link %}</a>{% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+</div>

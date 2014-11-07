@@ -13,3 +13,9 @@ body {
 #deployment_variables_table {
     width: 33.3333%;
 }
+
+#logs li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

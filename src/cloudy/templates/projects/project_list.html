@@ -11,58 +11,71 @@
 {% endblock %}
 
 {% block contents %}
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>Project name</th>
-            <th>Deployments</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for project in object_list %}
-        <tr>
-            <td>
-                <a href="{{ project.get_absolute_url }}">{{ project }}</a>
-                <div class="pull-right">
-                    <a href="{% url 'projects_delete' pk=project.pk %}" class="btn btn-default btn-xs">
-                        <span class="glyphicon glyphicon-remove"></span> Delete
-                    </a>
-                </div>
-            </td>
-            <td>
-                <div class="pull-right">
-                    <a href="{% url 'projects_create_deployment' project_pk=project.pk %}" class="btn btn-default btn-xs">
-                        <span class="glyphicon glyphicon-plus"></span> Add
-                    </a>
-                </div>
-                <ul class="list-unstyled">
-                    {% for deployment in project.deployments.all %}
-                    <li>
-                        <a href="{{ deployment.get_absolute_url }}">{{ deployment }}</a>
-                        {% for label, count, class in deployment.nodes_info %}
-                        <span class="label {{ class }}" title="{{ label }}">{{ count }}</span>
-                        {% endfor %}
-                        {% if deployment.nodes_info|length == 1 %}
-                            {% if deployment.grouped_nodes|length == 1 %}
-                                {% with deployment.grouped_nodes.0.0 as first_node %}
-                                    <small class="text-muted">
-                                        {{ first_node.last_deployment_date|naturaltime }}
-                                        -
-                                        <span title="{{ first_node.last_deployed_source_url }}">{{ first_node.last_deployed_source_url|truncate_vcs_url }}</span>
-                                    </small>
-                                {% endwith %}
-                            {% else %}
-                                <small class="text-muted">
-                                    <span class="glyphicon glyphicon-exclamation-sign"></span> inconsistencies found, check deployment for details
-                                </small>
-                            {% endif %}
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                </ul>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-xs-9">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Project name</th>
+                    <th>Deployments</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in object_list %}
+                <tr>
+                    <td>
+                        <a href="{{ project.get_absolute_url }}">{{ project }}</a>
+                        <div class="pull-right">
+                            <a href="{% url 'projects_delete' pk=project.pk %}" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-remove"></span> Delete
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="pull-right">
+                            <a href="{% url 'projects_create_deployment' project_pk=project.pk %}" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-plus"></span> Add
+                            </a>
+                        </div>
+                        <ul class="list-unstyled">
+                            {% for deployment in project.deployments.all %}
+                            <li>
+                                <a href="{{ deployment.get_absolute_url }}">{{ deployment }}</a>
+                                {% for label, count, class in deployment.nodes_info %}
+                                <span class="label {{ class }}" title="{{ label }}">{{ count }}</span>
+                                {% endfor %}
+                                {% if deployment.nodes_info|length == 1 %}
+                                    {% if deployment.grouped_nodes|length == 1 %}
+                                        {% with deployment.grouped_nodes.0.0 as first_node %}
+                                            <small class="text-muted">
+                                                {{ first_node.last_deployment_date|naturaltime }}
+                                                -
+                                                <span title="{{ first_node.last_deployed_source_url }}">{{ first_node.last_deployed_source_url|truncate_vcs_url }}</span>
+                                            </small>
+                                        {% endwith %}
+                                    {% else %}
+                                        <small class="text-muted">
+                                            <span class="glyphicon glyphicon-exclamation-sign"></span> inconsistencies found, check deployment for details
+                                        </small>
+                                    {% endif %}
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-xs-3">
+        {% include 'logs/include/activity.html' %}
+    </div>
+</div>
+{% endblock %}
+
+{% block page_script %}
+<script>
+{% include 'logs/include/activity.js' %}
+</script>
 {% endblock %}
