@@ -16,6 +16,10 @@ class NginxCloudyDeployScript(PythonDeployScript):
     ]
 
     def install(self):
+        # Expand user in static root location
+        self.dvars['cloudy']['static_root'] = op.expanduser(
+                self.dvars['cloudy']['static_root'])
+
         # Copy configuration files
         for src, dst_path in self.conf_files:
             src = op.join('deploy', src)
