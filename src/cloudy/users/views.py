@@ -16,6 +16,7 @@ class UsersList(CloudyViewMixin, ListView):
     model = User
     template_name = 'users/user_list.html'
     context_object_name = 'users'
+    menu_item = 'users'
 
 
 class UpdateUserProfile(CloudyViewMixin, UpdateView):

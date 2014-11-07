@@ -76,11 +76,13 @@ class CreateProject(EditProjectMixin, LogCreationMixin, CreateView):
 class UpdateProject(EditProjectMixin, LogUpdateMixin, UpdateView):
 
     heading = 'Configure project'
-    breadcrumbs = [
-        ('Projects', reverse_lazy('projects_list')),
-        ('Configure project', None),
-    ]
 
+    @property
+    def breadcrumbs(self):
+        return [
+            ('Projects', reverse('projects_list')),
+            (self.object, None),
+        ]
 
 class DeleteProject(CloudyViewMixin, LogDeletionMixin, DeleteView):
 
@@ -134,7 +136,7 @@ class EditDeploymentMixin(DeploymentViewsMixin):
         return [
             ('Projects', reverse_lazy('projects_list')),
             (self.project, self.project.get_absolute_url()),
-            (self.heading, None),
+            (self.object, None),
         ]
 
     def crispy_layout(self):
@@ -306,10 +308,13 @@ class CreateBaseVariables(EditBaseVariablesMixin, CreateView):
 class UpdateBaseVariables(EditBaseVariablesMixin, UpdateView):
 
     heading = 'Edit base variables'
-    breadcrumbs = [
-        ('Base variables', reverse_lazy('projects_base_variables_list')),
-        (heading, None),
-    ]
+
+    @property
+    def breadcrumbs(self):
+        return [
+            ('Base variables', reverse_lazy('projects_base_variables_list')),
+            (self.object, None),
+        ]
 
 
 class DeleteBaseVariables(CloudyViewMixin, DeleteView):
