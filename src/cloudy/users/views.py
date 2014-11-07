@@ -1,12 +1,12 @@
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
-from vanilla import UpdateView, ListView
+from vanilla import UpdateView, ListView, CreateView
 
 from cloudy.utils import uuid_hex
 from cloudy.views import CloudyViewMixin
 from .models import UserProfile
-from .forms import UserProfileForm
+from .forms import UserProfileForm, UserCreationFormWithEmail
 
 
 class UsersList(CloudyViewMixin, ListView):
@@ -46,3 +46,17 @@ class UpdateUserProfile(CloudyViewMixin, UpdateView):
             self.object.secret = uuid_hex()
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class CreateUser(CloudyViewMixin, CreateView):
+
+    heading = 'Create user'
+    breadcrumbs = [
+        ('Users', reverse_lazy('users_list')),
+        ('Create pser', None),
+    ]
+
+    model = User
+    template_name = 'users/user_form.html'
+    form_class = UserCreationFormWithEmail
+    success_url = reverse_lazy('users_list')

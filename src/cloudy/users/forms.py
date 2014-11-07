@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -16,3 +18,16 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         exclude = ['user']
+
+
+class UserCreationFormWithEmail(UserCreationForm):
+
+    def __init__(self, *args, **kwargs):
+        super(UserCreationFormWithEmail, self).__init__(*args, **kwargs)
+        self.fields['email'].required = True
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('Submit', 'Submit'))
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
