@@ -7,7 +7,9 @@ from django.forms import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect
 
 from cloudy.crispy import crispy_context
-from cloudy.logs import add_log
+from cloudy.logs.models import LogEntry
+from cloudy.logs.views import (LogUpdateMixin, LogCreationMixin,
+        LogDeletionMixin)
 from .models import (Project, Deployment, DeploymentLogEntry, Node,
         DeploymentBaseVariables)
 from .forms import EditDeploymentForm, EditDeploymentBaseVariablesForm
@@ -42,6 +44,10 @@ class ProjectsList(ProjectsMixin, ListView):
         ('Projects', None)
     ]
 
+    def get_context_data(self, **kwargs):
+        logs = LogEntry.objects.all().order_by('-timestamp')[:50]
+        return super(ProjectsList, self).get_context_data(logs=logs, **kwargs)
+
 
 class EditProjectMixin(ProjectsMixin):
 
@@ -74,7 +80,7 @@ class EditProjectMixin(ProjectsMixin):
         return reverse('projects_list')
 
 
-class CreateProject(EditProjectMixin, CreateView):
+class CreateProject(EditProjectMixin, LogCreationMixin, CreateView):
 
     heading = 'Create project'
     breadcrumbs = [
@@ -83,7 +89,7 @@ class CreateProject(EditProjectMixin, CreateView):
     ]
 
 
-class UpdateProject(EditProjectMixin, UpdateView):
+class UpdateProject(EditProjectMixin, LogUpdateMixin, UpdateView):
 
     heading = 'Configure project'
     breadcrumbs = [
@@ -91,13 +97,8 @@ class UpdateProject(EditProjectMixin, UpdateView):
         ('Configure project', None),
     ]
 
-    def form_valid(self, form):
-        add_log('{user} edited project "{object}"', object=self.object,
-                user=self.request.user)
-        return super(UpdateProject, self).form_valid(form)
 
-
-class DeleteProject(ProjectsMixin, DeleteView):
+class DeleteProject(ProjectsMixin, LogDeletionMixin, DeleteView):
 
     model = Project
     heading = 'Delete project'
@@ -105,9 +106,7 @@ class DeleteProject(ProjectsMixin, DeleteView):
         ('Projects', reverse_lazy('projects_list')),
         ('Delete project', None),
     ]
-
-    def get_success_url(self):
-        return reverse('projects_list')
+    success_url = reverse_lazy('projects_list')
 
 # ----------------------------------------------------------------------------
 # Deployment views
@@ -125,6 +124,9 @@ class DeploymentViewsMixin(ProjectsMixin):
             (self.project, self.project.get_absolute_url()),
             (self.heading, None),
         ]
+
+    def get_logged_object_name(self):
+        return u'%s/%s' % (self.object.project, self.object)
 
 
 class EditDeploymentMixin(DeploymentViewsMixin):
@@ -182,7 +184,7 @@ class EditDeploymentMixin(DeploymentViewsMixin):
                 kwargs={'pk': self.object.pk})
 
 
-class CreateDeployment(EditDeploymentMixin, CreateView):
+class CreateDeployment(EditDeploymentMixin, LogCreationMixin, CreateView):
 
     heading = 'Create deployment'
 
@@ -199,18 +201,16 @@ class CreateDeployment(EditDeploymentMixin, CreateView):
                 **kwargs)
 
 
-class UpdateDeployment(EditDeploymentMixin, UpdateView):
+class UpdateDeployment(EditDeploymentMixin, LogUpdateMixin, UpdateView):
 
     heading = 'Configure deployment'
 
 
-class DeleteDeployment(DeploymentViewsMixin, DeleteView):
+class DeleteDeployment(DeploymentViewsMixin, LogDeletionMixin, DeleteView):
 
     model = Deployment
     heading = 'Delete deployment'
-
-    def get_success_url(self):
-        return reverse('projects_list')
+    success_url = reverse_lazy('projects_list')
 
 
 class DeploymentOverview(DeploymentViewsMixin, DetailView):
