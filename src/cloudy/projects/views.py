@@ -29,7 +29,7 @@ class ProjectsList(CloudyViewMixin, ListView):
     menu_item = 'projects'
 
     def get_context_data(self, **kwargs):
-        logs = LogEntry.objects.all().order_by('-timestamp')[:50]
+        logs = LogEntry.objects.all()[:50]
         return super(ProjectsList, self).get_context_data(logs=logs, **kwargs)
 
 
