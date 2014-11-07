@@ -1,3 +1,5 @@
+from vanilla import ListView
+
 from . import add_log, get_object_link
 from .models import LogEntry
 
@@ -62,3 +64,10 @@ class LogDeletionMixin(LoggingMixinBase):
                 object_name=object_name)
 
         return super(LogDeletionMixin, self).post(request, *args, **kwargs)
+
+
+class LogEntriesList(ListView):
+
+    model = LogEntry
+    paginate_by = 50
+    context_object_name = 'logs'

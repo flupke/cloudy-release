@@ -14,8 +14,12 @@ body {
     width: 33.3333%;
 }
 
-#logs li {
+#logs_activity li {
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#logs .date {
     white-space: nowrap;
 }
