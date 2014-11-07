@@ -1,6 +1,7 @@
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
-from vanilla import UpdateView
+from django.contrib.auth.models import User
+from vanilla import UpdateView, ListView
 
 from cloudy.utils import uuid_hex
 from cloudy.views import CloudyViewMixin
@@ -8,13 +9,32 @@ from .models import UserProfile
 from .forms import UserProfileForm
 
 
+class UsersList(CloudyViewMixin, ListView):
+
+    heading = 'Users'
+    breadcrumbs = [('Users', None)]
+    model = User
+    template_name = 'users/user_list.html'
+    context_object_name = 'users'
+
+
 class UpdateUserProfile(CloudyViewMixin, UpdateView):
 
     heading = 'Profile'
-    breadcrumbs = [('Profile', None)]
     model = UserProfile
     form_class = UserProfileForm
-    menu_item = 'users_profile'
+
+    @property
+    def breadcrumbs(self):
+        return [
+            ('Users', reverse_lazy('users_list')),
+            (self.object.user, None),
+        ]
+
+    @property
+    def menu_item(self):
+        if self.request.user.pk == self.object.pk:
+            return 'users_profile'
 
     def get_success_url(self):
         return reverse('users_profile', kwargs={'pk': self.object.pk})

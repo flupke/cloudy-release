@@ -35,6 +35,7 @@
             <ul class="nav navbar-nav">
                 <li{% if menu_item == 'projects' %} class="active"{% endif %}><a href="{% url 'projects_list' %}">Projects</a></li>
                 <li{% if menu_item == 'base_variables' %} class="active"{% endif %}><a href="{% url 'projects_base_variables_list' %}">Base variables</a></li>
+                <li{% if menu_item == 'users' %} class="active"{% endif %}><a href="{% url 'users_list' %}">Users</a></li>
             </ul>
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
@@ -53,6 +54,7 @@
     <div class="contents">
         {% block messages %}{% endblock %}
         {% block breadcrumbs %}
+        {% if breadcrumbs %}
         <ol class="breadcrumb">
             {% for label, url in breadcrumbs %}
             <li{% if forloop.last %} class="active"{% endif %}>
@@ -64,15 +66,18 @@
             </li>
             {% endfor %}
         </ol>
+        {% endif %}
         {% endblock %}
 
         {% block navbar %}
+        {% if heading %}
         <div class="navbar navbar-default">
             <div class="navbar-header">
                 <a class="navbar-brand">{{ heading }}</a>
             </div>
             {% block navbar_extra %}{% endblock %}
         </div>
+        {% endif %}
         {% endblock %}
         {% block contents %}{% endblock %}
     </div>
