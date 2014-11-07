@@ -33,7 +33,18 @@ class ProjectsList(CloudyViewMixin, ListView):
         return super(ProjectsList, self).get_context_data(logs=logs, **kwargs)
 
 
-class EditProjectMixin(CloudyViewMixin):
+class ProjectMixin(CloudyViewMixin):
+
+    @property
+    def breadcrumbs(self):
+        tail = getattr(self, 'object', self.heading)
+        return [
+            ('Projects', reverse_lazy('projects_list')),
+            (tail, None),
+        ]
+
+
+class EditProjectMixin(ProjectMixin):
 
     model = Project
 
@@ -67,31 +78,17 @@ class EditProjectMixin(CloudyViewMixin):
 class CreateProject(EditProjectMixin, LogCreationMixin, CreateView):
 
     heading = 'Create project'
-    breadcrumbs = [
-        ('Projects', reverse_lazy('projects_list')),
-        ('Create project', None),
-    ]
 
 
 class UpdateProject(EditProjectMixin, LogUpdateMixin, UpdateView):
 
     heading = 'Configure project'
 
-    @property
-    def breadcrumbs(self):
-        return [
-            ('Projects', reverse('projects_list')),
-            (self.object, None),
-        ]
 
-class DeleteProject(CloudyViewMixin, LogDeletionMixin, DeleteView):
+class DeleteProject(ProjectMixin, LogDeletionMixin, DeleteView):
 
     model = Project
     heading = 'Delete project'
-    breadcrumbs = [
-        ('Projects', reverse_lazy('projects_list')),
-        ('Delete project', None),
-    ]
     success_url = reverse_lazy('projects_list')
 
 # ----------------------------------------------------------------------------
@@ -105,10 +102,11 @@ class DeploymentViewsMixin(CloudyViewMixin):
 
     @property
     def breadcrumbs(self):
+        tail = getattr(self, 'object', self.heading)
         return [
             ('Projects', reverse_lazy('projects_list')),
             (self.project, self.project.get_absolute_url()),
-            (self.heading, None),
+            (tail, None),
         ]
 
     def get_logged_object_name(self):
@@ -130,14 +128,6 @@ class EditDeploymentMixin(DeploymentViewsMixin):
             else:
                 self._project = self.object.project
         return self._project
-
-    @property
-    def breadcrumbs(self):
-        return [
-            ('Projects', reverse_lazy('projects_list')),
-            (self.project, self.project.get_absolute_url()),
-            (self.object, None),
-        ]
 
     def crispy_layout(self):
         '''
@@ -322,14 +312,16 @@ class DeleteBaseVariables(CloudyViewMixin, DeleteView):
     model = DeploymentBaseVariables
     success_url = reverse_lazy('projects_base_variables_list')
     heading = 'Delete base variables'
-    breadcrumbs = [
-        ('Base variables', reverse_lazy('projects_base_variables_list')),
-        (heading, None),
-    ]
+
+    @property
+    def breadcrumbs(self):
+        return [
+            ('Base variables', reverse('projects_base_variables_list')),
+            (self.object, None),
+        ]
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.object.deleted = True
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
-
