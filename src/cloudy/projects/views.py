@@ -10,46 +10,30 @@ from cloudy.crispy import crispy_context
 from cloudy.logs.models import LogEntry
 from cloudy.logs.views import (LogUpdateMixin, LogCreationMixin,
         LogDeletionMixin)
+from cloudy.views import CloudyViewMixin
 from .models import (Project, Deployment, DeploymentLogEntry, Node,
         DeploymentBaseVariables)
 from .forms import EditDeploymentForm, EditDeploymentBaseVariablesForm
 
 
-class ProjectsMixin(object):
-    '''
-    Mixin class for all views in this app.
-    '''
-
-    heading = None
-    breadcrumbs = []
-
-    def get_context_data(self, **context):
-        path = self.request.path
-        if path.startswith('/projects/base-variables/'):
-            menu_item = 'base_variables'
-        else:
-            menu_item = 'projects'
-        return super(ProjectsMixin, self).get_context_data(
-                heading=self.heading, breadcrumbs=self.breadcrumbs,
-                menu_item=menu_item, **context)
-
 # ----------------------------------------------------------------------------
 # Projects views
 
-class ProjectsList(ProjectsMixin, ListView):
+class ProjectsList(CloudyViewMixin, ListView):
 
     model = Project
     heading = 'Projects'
     breadcrumbs = [
         ('Projects', None)
     ]
+    menu_item = 'projects'
 
     def get_context_data(self, **kwargs):
         logs = LogEntry.objects.all().order_by('-timestamp')[:50]
         return super(ProjectsList, self).get_context_data(logs=logs, **kwargs)
 
 
-class EditProjectMixin(ProjectsMixin):
+class EditProjectMixin(CloudyViewMixin):
 
     model = Project
 
@@ -98,7 +82,7 @@ class UpdateProject(EditProjectMixin, LogUpdateMixin, UpdateView):
     ]
 
 
-class DeleteProject(ProjectsMixin, LogDeletionMixin, DeleteView):
+class DeleteProject(CloudyViewMixin, LogDeletionMixin, DeleteView):
 
     model = Project
     heading = 'Delete project'
@@ -111,7 +95,7 @@ class DeleteProject(ProjectsMixin, LogDeletionMixin, DeleteView):
 # ----------------------------------------------------------------------------
 # Deployment views
 
-class DeploymentViewsMixin(ProjectsMixin):
+class DeploymentViewsMixin(CloudyViewMixin):
 
     @property
     def project(self):
@@ -232,7 +216,7 @@ class DeploymentOverview(DeploymentViewsMixin, DetailView):
 # ----------------------------------------------------------------------------
 # Nodes
 
-class NodeViewsMixin(ProjectsMixin):
+class NodeViewsMixin(CloudyViewMixin):
 
     @property
     def node(self):
@@ -278,15 +262,16 @@ class DeleteNode(View):
 # ----------------------------------------------------------------------------
 # Base variables
 
-class BaseVariablesList(ProjectsMixin, ListView):
+class BaseVariablesList(CloudyViewMixin, ListView):
 
     model = DeploymentBaseVariables
     context_object_name = 'base_variables_list'
     heading = 'Base variables'
     breadcrumbs = [(heading, None)]
+    menu_item = 'base_variables'
 
 
-class EditBaseVariablesMixin(ProjectsMixin):
+class EditBaseVariablesMixin(CloudyViewMixin):
 
     model = DeploymentBaseVariables
     form_class = EditDeploymentBaseVariablesForm
@@ -327,7 +312,7 @@ class UpdateBaseVariables(EditBaseVariablesMixin, UpdateView):
     ]
 
 
-class DeleteBaseVariables(ProjectsMixin, DeleteView):
+class DeleteBaseVariables(CloudyViewMixin, DeleteView):
 
     model = DeploymentBaseVariables
     success_url = reverse_lazy('projects_base_variables_list')

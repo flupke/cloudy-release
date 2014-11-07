@@ -1,5 +1,6 @@
 from vanilla import ListView
 
+from cloudy.views import CloudyViewMixin
 from . import add_log, get_object_link
 from .models import LogEntry
 
@@ -66,8 +67,10 @@ class LogDeletionMixin(LoggingMixinBase):
         return super(LogDeletionMixin, self).post(request, *args, **kwargs)
 
 
-class LogEntriesList(ListView):
+class LogEntriesList(CloudyViewMixin, ListView):
 
+    heading = 'Logs'
+    breadcrumbs = [('Logs', None)]
     model = LogEntry
     paginate_by = 50
     context_object_name = 'logs'
