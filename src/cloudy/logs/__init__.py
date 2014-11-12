@@ -22,7 +22,9 @@ def add_log(text, *args, **kwargs):
     # Create textual representation of user
     user = kwargs.get('user')
     if user is not None:
-        user_repr = '%s <%s>' % (user.username, user.email)
+        user_repr = '%s' % user.username
+        if user.email:
+            user_repr += ' <%s>' % user.email
     else:
         user_repr = 'Anonymous'
     kwargs['user'] = user_repr
