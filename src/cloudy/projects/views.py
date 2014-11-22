@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.forms import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
 
 from cloudy.crispy import crispy_context
 from cloudy.logs.models import LogEntry
@@ -29,7 +30,7 @@ class ProjectsList(CloudyViewMixin, ListView):
     menu_item = 'projects'
 
     def get_context_data(self, **kwargs):
-        logs = LogEntry.objects.all()[:50]
+        logs = LogEntry.objects.all()[:settings.RECENT_HISTORY_ITEMS]
         return super(ProjectsList, self).get_context_data(logs=logs, **kwargs)
 
 
@@ -202,8 +203,12 @@ class DeploymentOverview(DeploymentViewsMixin, DetailView):
     def get_context_data(self, **context):
         poll_url = self.request.build_absolute_uri(
                 reverse('api_poll_deployment', kwargs={'key': self.object.key}))
-        context['poll_url'] = poll_url
-        return super(DeploymentOverview, self).get_context_data(**context)
+        full_logs_url = reverse('projects_deployment_logs',
+                kwargs={'deployment_id': self.object.pk})
+        logs = self.object.logs.all()[:settings.RECENT_HISTORY_ITEMS]
+        return super(DeploymentOverview, self).get_context_data(
+                poll_url=poll_url, full_logs_url=full_logs_url, logs=logs,
+                **context)
 
 # ----------------------------------------------------------------------------
 # Nodes

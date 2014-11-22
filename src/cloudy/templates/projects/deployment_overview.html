@@ -22,37 +22,44 @@
 {% endblock %}
 
 {% block contents %}
-<p>Configure your clients to point to the following URL:<p>
-<pre>{{ poll_url }}</pre>
+<div class="row">
+    <div class="col-xs-9">
+        <p>Configure your clients to point to the following URL:<p>
+        <pre>{{ poll_url }}</pre>
 
-<h2>Nodes status</h2>
-{% if deployment.nodes.count %}
-<ul class="list-unstyled">
-    {% for group in deployment.grouped_nodes %}
-        {% if group|length == 1 %}
-            {% for node in group %}
-                {% include 'projects/include/deployment_overview_node.html' %}
-            {% endfor %}
-        {% else %}
-            {% with node=group.0 %}
-                {% include 'projects/include/deployment_overview_node.html' %}
-                <li>
-                    <a data-toggle="collapse" data-target="#node-group-{{ forloop.counter0 }}" class="btn btn-default btn-xs">Show {{ group|slice:"1:"|length }} others</a>
-                <li>
-            {% endwith %}
-            <li id="node-group-{{ forloop.counter0 }}" class="collapse">
-                <ul class="list-unstyled">
-                    {% for node in group|slice:"1:" %}
+        <h2>Nodes status</h2>
+        {% if deployment.nodes.count %}
+        <ul class="list-unstyled">
+            {% for group in deployment.grouped_nodes %}
+                {% if group|length == 1 %}
+                    {% for node in group %}
                         {% include 'projects/include/deployment_overview_node.html' %}
                     {% endfor %}
-                </ul>
-            </li>
+                {% else %}
+                    {% with node=group.0 %}
+                        {% include 'projects/include/deployment_overview_node.html' %}
+                        <li>
+                            <a data-toggle="collapse" data-target="#node-group-{{ forloop.counter0 }}" class="btn btn-default btn-xs">Show {{ group|slice:"1:"|length }} others</a>
+                        <li>
+                    {% endwith %}
+                    <li id="node-group-{{ forloop.counter0 }}" class="collapse">
+                        <ul class="list-unstyled">
+                            {% for node in group|slice:"1:" %}
+                                {% include 'projects/include/deployment_overview_node.html' %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No nodes information yet.</p>
         {% endif %}
-    {% endfor %}
-</ul>
-{% else %}
-<p>No nodes information yet.</p>
-{% endif %}
+    </div>
+    <div class="col-xs-3">
+        {% include 'logs/include/activity.html' %}
+    </div>
+</div>
 {% endblock %}
 
 {% block page_script %}
@@ -97,5 +104,6 @@
             $.post('{% url 'projects_delete_node' %}', {pk: node_pk});
         });
     });
+    {% include 'logs/include/activity.js' %}
 </script>
 {% endblock %}

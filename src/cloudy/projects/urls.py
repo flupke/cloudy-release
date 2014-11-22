@@ -2,6 +2,7 @@ from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
+from cloudy.logs.views import LogEntriesList
 from .views import (ProjectsList, CreateProject, UpdateProject, DeleteProject,
         CreateDeployment, UpdateDeployment, DeploymentOverview,
         DeleteDeployment, NodeLogs, DeleteNode, BaseVariablesList,
@@ -17,6 +18,9 @@ urlpatterns = patterns('',
         name='projects_update'),
     url(r'^(?P<pk>\d+)/delete/$',
         login_required(DeleteProject.as_view()), name='projects_delete'),
+    url(r'^(?P<project_id>\d+)/logs/$',
+        login_required(LogEntriesList.as_view(filter_obj_name='project')),
+        name='projects_logs'),
 
     # Deployments
     url(r'^(?P<project_pk>\d+)/deployments/create/$',
@@ -31,6 +35,9 @@ urlpatterns = patterns('',
     url(r'^deployments/(?P<pk>\d+)/overview/$',
         login_required(DeploymentOverview.as_view()),
         name='projects_deployment_overview'),
+    url(r'^deployments/(?P<deployment_id>\d+)/logs/$',
+        login_required(LogEntriesList.as_view(filter_obj_name='deployment')),
+        name='projects_deployment_logs'),
 
     # Nodes
     url(r'^nodes/(?P<pk>\d+)/logs/$', login_required(NodeLogs.as_view()),

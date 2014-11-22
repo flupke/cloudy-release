@@ -108,3 +108,6 @@ SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
 
 # Hide nodes that have not been seen since this number of hours
 HIDE_NODES_AFTER = 1
+
+# Logs settings
+RECENT_HISTORY_ITEMS = 20

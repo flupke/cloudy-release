@@ -1,3 +1,4 @@
+from cloudy.projects.models import Deployment, Project
 from .models import LogEntry
 
 
@@ -33,11 +34,22 @@ def add_log(text, *args, **kwargs):
     obj = kwargs.get('object')
     link = get_object_link(obj)
 
+    # Fill project/deployment foreign keys if object is a Project or a
+    # Deployment
+    log_entry_kwargs = {}
+    if obj is not None:
+        if isinstance(obj, Deployment):
+            log_entry_kwargs['deployment'] = obj
+            log_entry_kwargs['project'] = obj.project
+        elif isinstance(obj, Project):
+            log_entry_kwargs['project'] = obj
+
     # Format text
     text = text.format(*args, **kwargs)
 
     # Create log entry
-    return LogEntry.objects.create(text=text, user=user, link=link)
+    return LogEntry.objects.create(text=text, user=user, link=link,
+            **log_entry_kwargs)
 
 
 def get_object_link(obj):

@@ -8,6 +8,10 @@ class LogEntry(models.Model):
     text = models.TextField()
     user = models.ForeignKey(User, null=True, related_name='logs')
     link = models.CharField(max_length=255, null=True, db_index=True)
+    project = models.ForeignKey('projects.Project', null=True,
+            db_index=True, related_name='logs')
+    deployment = models.ForeignKey('projects.Deployment', null=True,
+            db_index=True, related_name='logs')
 
     def __unicode__(self):
         return self.text

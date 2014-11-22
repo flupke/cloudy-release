@@ -1,6 +1,8 @@
+from django.core.urlresolvers import reverse
 from vanilla import ListView
 
 from cloudy.views import CloudyViewMixin
+from cloudy.projects.models import Project, Deployment
 from . import add_log, get_object_link
 from .models import LogEntry
 
@@ -69,8 +71,51 @@ class LogDeletionMixin(LoggingMixinBase):
 
 class LogEntriesList(CloudyViewMixin, ListView):
 
-    heading = 'Logs'
-    breadcrumbs = [('Logs', None)]
     model = LogEntry
     paginate_by = 50
     context_object_name = 'logs'
+    filter_obj_name = None
+
+    @property
+    def breadcrumbs(self):
+        if self.filter_obj_name is None:
+            return [('Logs', None)]
+        elif self.filter_obj_name == 'project':
+            return [
+                ('Logs', reverse('logs_list')),
+                (self.filter_obj, None),
+            ]
+        elif self.filter_obj_name == 'deployment':
+            project = self.filter_obj.project
+            return [
+                ('Logs', reverse('logs_list')),
+                (self.filter_obj.project, reverse('projects_logs',
+                    kwargs={'project_id': project.pk})),
+                (self.filter_obj, None),
+            ]
+
+    @property
+    def heading(self):
+        if self.filter_obj_name is None:
+            return 'Logs'
+        elif self.filter_obj_name == 'project':
+            return 'Logs for project %s' % self.filter_obj
+        elif self.filter_obj_name == 'deployment':
+            return 'Logs for deployment %s' % self.filter_obj
+
+    def get_queryset(self):
+        qs = super(LogEntriesList, self).get_queryset()
+        if self.filter_obj_name is not None:
+            kwargs = {self.filter_obj_name: self.filter_obj}
+            qs = qs.filter(**kwargs)
+        return qs
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.filter_obj_name == 'project':
+            self.filter_obj = Project.objects.get(pk=kwargs['project_id'])
+        elif self.filter_obj_name == 'deployment':
+            self.filter_obj = Deployment.objects.get(pk=kwargs['deployment_id'])
+        elif self.filter_obj_name is not None:
+            raise ValueError('invalid value for filter_obj_name: %s' %
+                    self.filter_obj_name)
+        return super(LogEntriesList, self).dispatch(request, *args, **kwargs)
