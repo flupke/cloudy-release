@@ -20,7 +20,7 @@ tests_require = [
 ]
 
 install_requires = [
-    'Django==1.7.1',
+    'Django==1.7.4',
     'psycopg2==2.5.1',
     'django-vanilla-views==1.0.2',
     'django-crispy-forms==1.4.0',
