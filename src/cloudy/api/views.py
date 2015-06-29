@@ -144,6 +144,7 @@ class PollDeployment(DeploymentView):
         data['commit_url'] = request.build_absolute_uri(
                 reverse('api_deployment_commit',
                 kwargs={'key': self.deployment.key}))
+        data['clean'] = self.deployment.project.clean
         return data
 
 
