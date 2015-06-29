@@ -236,6 +236,7 @@ class Deployment(models.Model, DeploymentVariablesContainer):
         hf.update(self.project.name)
         hf.update(self.project.repository_type)
         hf.update(self.project.repository_url)
+        hf.update('clean_repository:%s' % self.project.clean_repository)
         hf.update(self.project.deployment_script_type)
         hf.update(self.project.deployment_script)
         hf.update(self.base_dir)
