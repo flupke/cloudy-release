@@ -36,7 +36,7 @@ class Project(models.Model):
     repository_type = models.CharField(_('repository type'), max_length=255,
             choices=[('git', 'Git')], default='git')
     repository_url = models.CharField(_('repository URL'), max_length=2047)
-    clean = models.BooleanField(_('clean repository befor deployment'),
+    clean = models.BooleanField(_('clean repository before deployments'),
             default=True)
 
     deployment_script_type = models.CharField(_('deployment script type'),
